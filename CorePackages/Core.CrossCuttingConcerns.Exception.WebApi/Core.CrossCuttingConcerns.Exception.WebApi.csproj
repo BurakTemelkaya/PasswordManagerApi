@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.38" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core.CrossCuttingConcerns.Exception\Core.CrossCuttingConcerns.Exception.csproj" />
+    <ProjectReference Include="..\Core.CrossCuttingConcerns.Logging.Abstraction\Core.CrossCuttingConcerns.Logging.Abstraction.csproj" />
+    <ProjectReference Include="..\Core.CrossCuttingConcerns.Logging\Core.CrossCuttingConcerns.Logging.csproj" />
+  </ItemGroup>
+
+</Project>
