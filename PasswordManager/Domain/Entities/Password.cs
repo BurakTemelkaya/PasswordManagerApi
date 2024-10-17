@@ -1,27 +1,27 @@
 ﻿using Core.Persistence.Repositories;
 
-namespace Domain.Entites;
+namespace Domain.Entities;
 
 public class Password : Entity<Guid>
 {
     public string Name { get; set; }
-    public string EncryptedPassword { get; set; }
+    public byte[] EncryptedPassword { get; set; }
     public string? Description { get; set; }
     public string? WebSiteUrl { get; set; }
 
     public int UserId { get; set; }
 
-    public User User { get; set; }
+    public virtual User User { get; set; }
 
     public Password()
     {
         Name = string.Empty;
-        EncryptedPassword = string.Empty;
+        EncryptedPassword = Array.Empty<byte>();
         UserId = default!;
         User = new();
     }
 
-    public Password(string name, string description, string encryptedPassword, int userId, User user)
+    public Password(string name, string description, byte[] encryptedPassword, int userId, User user)
     {
         Name = name;
         Description = description;

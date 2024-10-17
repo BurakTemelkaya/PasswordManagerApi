@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CorePackages\Core.Persistence\Core.Persistence.csproj" />
-    <ProjectReference Include="..\..\CorePackages\Core.Security\Core.Security.csproj" />
+    <ProjectReference Include="..\Core.Localization.Resource.Yaml\Core.Localization.Resource.Yaml.csproj" />
+    <ProjectReference Include="..\CorePackages\Core.Persistence\Core.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\CorePackages\Core.Persistence\Core.Persistence.csproj" />
-    <ProjectReference Include="..\..\CorePackages\Core.Security\Core.Security.csproj" />
+    <PackageReference Include="YamlDotNet" Version="16.1.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core.Localization.Abstraction\Core.Localization.Abstraction.csproj" />
   </ItemGroup>
 
 </Project>
