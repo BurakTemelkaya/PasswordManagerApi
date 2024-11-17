@@ -9,8 +9,9 @@ public class User : Core.Security.Entities.User<Guid>
     public byte[] MasterPasswordSalt { get; set; }
     public virtual ICollection<Password> Passwords { get; set; } = default!;
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = default!;
+	public virtual ICollection<UserOperationClaim> UserOperationClaims { get; set; } = default!;
 
-    public User()
+	public User()
     {
         UserName = string.Empty;
         Email = string.Empty;

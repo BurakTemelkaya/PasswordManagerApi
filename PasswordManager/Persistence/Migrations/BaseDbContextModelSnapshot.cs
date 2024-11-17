@@ -53,14 +53,14 @@ namespace Persistence.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("a3ee3d59-f343-4660-8895-da451658ac00"),
-                            CreatedDate = new DateTime(2024, 11, 17, 0, 31, 43, 254, DateTimeKind.Utc).AddTicks(618),
+                            Id = new Guid("f238078d-892d-41c3-a3b3-aabea7fbcd23"),
+                            CreatedDate = new DateTime(2024, 11, 17, 18, 52, 42, 67, DateTimeKind.Utc).AddTicks(1507),
                             Name = "Admin"
                         },
                         new
                         {
-                            Id = new Guid("2665f6e6-230c-4065-9c6d-bcb6c4b5a3bd"),
-                            CreatedDate = new DateTime(2024, 11, 17, 0, 31, 43, 254, DateTimeKind.Utc).AddTicks(624),
+                            Id = new Guid("450b017e-cd03-41fe-a9de-f9b3cd3e534d"),
+                            CreatedDate = new DateTime(2024, 11, 17, 18, 52, 42, 67, DateTimeKind.Utc).AddTicks(1515),
                             Name = "User"
                         });
                 });
@@ -81,7 +81,6 @@ namespace Persistence.Migrations
                         .HasColumnName("DeleteDate");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)")
                         .HasColumnName("Description");
@@ -290,7 +289,7 @@ namespace Persistence.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.User", "User")
-                        .WithMany()
+                        .WithMany("UserOperationClaims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -305,6 +304,8 @@ namespace Persistence.Migrations
                     b.Navigation("Passwords");
 
                     b.Navigation("RefreshTokens");
+
+                    b.Navigation("UserOperationClaims");
                 });
 #pragma warning restore 612, 618
         }

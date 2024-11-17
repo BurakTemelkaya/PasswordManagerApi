@@ -20,16 +20,19 @@
     <ProjectReference Include="..\..\CorePackages\Core.Persistence\Core.Persistence.csproj" />
     <ProjectReference Include="..\..\CorePackages\Core.Security.DependencyInjection\Core.Security.DependencyInjection.csproj" />
     <ProjectReference Include="..\Domain\Domain.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Features\Dtos\" />
-    <Folder Include="Services\UserOperationClaims\Commands\" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="Features\**\Resources\Locales\*.*.yaml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Features\Passwords\Commands\Delete\" />
+    <Folder Include="Features\Passwords\Commands\Update\" />
+    <Folder Include="Features\Passwords\Constants\" />
+    <Folder Include="Features\Passwords\Rules\" />
+    <Folder Include="Features\Passwords\Resources\" />
   </ItemGroup>
 
 </Project>

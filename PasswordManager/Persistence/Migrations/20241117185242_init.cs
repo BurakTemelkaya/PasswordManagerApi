@@ -49,7 +49,7 @@ namespace Persistence.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     EncryptedPassword = table.Column<byte[]>(type: "varbinary(1024)", maxLength: 1024, nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     WebSiteUrl = table.Column<string>(type: "nvarchar(2000)", maxLength: 2000, nullable: true),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -126,12 +126,12 @@ namespace Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "OperationClaims",
                 columns: new[] { "Id", "CreatedDate", "DeletedDate", "Name", "UpdatedDate" },
-                values: new object[] { new Guid("2665f6e6-230c-4065-9c6d-bcb6c4b5a3bd"), new DateTime(2024, 11, 17, 0, 31, 43, 254, DateTimeKind.Utc).AddTicks(624), null, "User", null });
+                values: new object[] { new Guid("450b017e-cd03-41fe-a9de-f9b3cd3e534d"), new DateTime(2024, 11, 17, 18, 52, 42, 67, DateTimeKind.Utc).AddTicks(1515), null, "User", null });
 
             migrationBuilder.InsertData(
                 table: "OperationClaims",
                 columns: new[] { "Id", "CreatedDate", "DeletedDate", "Name", "UpdatedDate" },
-                values: new object[] { new Guid("a3ee3d59-f343-4660-8895-da451658ac00"), new DateTime(2024, 11, 17, 0, 31, 43, 254, DateTimeKind.Utc).AddTicks(618), null, "Admin", null });
+                values: new object[] { new Guid("f238078d-892d-41c3-a3b3-aabea7fbcd23"), new DateTime(2024, 11, 17, 18, 52, 42, 67, DateTimeKind.Utc).AddTicks(1507), null, "Admin", null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Passwords_UserId",

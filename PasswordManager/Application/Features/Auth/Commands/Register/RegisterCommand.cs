@@ -1,84 +1,121 @@
-﻿using Application.Features.Auth.Rules;
+﻿using Application.Features.Auth.Dtos;
+using Application.Features.Auth.Rules;
 using Application.Services.AuthService;
+using Application.Services.OperationClaims;
+using Application.Services.UserOperationClaims;
 using Application.Services.Users;
+using Core.Security.Constants;
 using Core.Security.Hashing;
 using Core.Security.JWT;
 using Domain.Entities;
+using Infrastructure.Caching;
 using MediatR;
+using Microsoft.Extensions.Configuration;
 
 namespace Application.Features.Auth.Commands.Register;
 
 public class RegisterCommand : IRequest<RegisteredResponse>
 {
-    public string UserName { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
-    public string IpAddress { get; set; }
+	public UserForRegisterDto UserForRegisterDto { get; set; }
+	public string IpAddress { get; set; }
 
-    public RegisterCommand()
-    {
-        UserName = string.Empty;
-        Email = string.Empty;
-        Password = string.Empty;
-        IpAddress = string.Empty;
-    }
+	public RegisterCommand()
+	{
+		UserForRegisterDto = null!;
+		IpAddress = string.Empty;
+	}
 
-    public RegisterCommand(string userName, string email, string password, string ipAddress)
-    {
-        UserName = userName;
-        Email = email;
-        Password = password;
-        IpAddress = ipAddress;
-    }
+	public RegisterCommand(UserForRegisterDto userForRegisterDto, string ipAddress)
+	{
+		UserForRegisterDto = userForRegisterDto;
+		IpAddress = ipAddress;
+	}
 
-    public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisteredResponse>
-    {
-        private readonly IUserRepository _userRepository;
-        private readonly IAuthService _authService;
-        //private readonly AuthBusinessRules _authBusinessRules;
+	public class RegisterCommandHandler : IRequestHandler<RegisterCommand, RegisteredResponse>
+	{
+		private readonly IUserRepository _userRepository;
+		private readonly IAuthService _authService;
+		private readonly AuthBusinessRules _authBusinessRules;
+		private readonly ICacheManager _cacheManager;
+		private readonly IConfiguration _configuration;
+		private readonly IUserOperationClaimService _userOperationClaimService;
+		private readonly IOperationClaimService _operationClaimService;
 
-        public RegisterCommandHandler(
-            IUserRepository userRepository,
-            IAuthService authService,
-            AuthBusinessRules authBusinessRules
-        )
-        {
-            _userRepository = userRepository;
-            _authService = authService;
-            //_authBusinessRules = authBusinessRules;
-        }
+		public RegisterCommandHandler(
+			IUserRepository userRepository,
+			IAuthService authService,
+			AuthBusinessRules authBusinessRules,
+			ICacheManager cacheManager,
+			IConfiguration configuration,
+			IUserOperationClaimService userOperationClaimService,
+			IOperationClaimService operationCliamService
 
-        public async Task<RegisteredResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
-        {
-            //await _authBusinessRules.UserEmailShouldBeNotExists(request.Email);
+		)
+		{
+			_userRepository = userRepository;
+			_authService = authService;
+			_authBusinessRules = authBusinessRules;
+			_cacheManager = cacheManager;
+			_configuration = configuration;
+			_userOperationClaimService = userOperationClaimService;
+			_operationClaimService = operationCliamService;
+		}
 
-            HashingHelper.CreateMasterPasswordHash(
-                request.Password,
-                hash: out byte[] passwordHash,
-                salt: out byte[] passwordSalt
-            );
+		public async Task<RegisteredResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
+		{
+			await _authBusinessRules.UserEmailShouldBeNotExists(request.UserForRegisterDto.Email);
 
-            User newUser =
-                new()
-                {
-                    Email = request.Email,
-                    UserName = request.UserName,
-                    MasterPasswordHash = passwordHash,
-                    MasterPasswordSalt = passwordSalt,
-                };
+			HashingHelper.CreateMasterPasswordHash(
+				request.UserForRegisterDto.Password,
+				hash: out byte[] passwordHash,
+				salt: out byte[] passwordSalt
+			);
 
-            User createdUser = await _userRepository.AddAsync(newUser);
+			OperationClaim? userRole = await _operationClaimService.GetAsync(x => x.Name == GeneralOperationClaims.User
+			, cancellationToken: cancellationToken);
 
-            AccessToken createdAccessToken = await _authService.CreateAccessToken(createdUser);
+			List<UserOperationClaim> addedClaims = new(){
+				new()
+				{
+					OperationClaimId= userRole!.Id,
+				}
+			};
 
-            RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(
-                createdUser,
-                request.IpAddress
-            );
-            RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
+			User newUser =
+				new()
+				{
+					Email = request.UserForRegisterDto.Email,
+					UserName = request.UserForRegisterDto.UserName,
+					MasterPasswordHash = passwordHash,
+					MasterPasswordSalt = passwordSalt,
+					UserOperationClaims = addedClaims
+				};
 
-            RegisteredResponse registeredResponse = new() { AccessToken = createdAccessToken, RefreshToken = addedRefreshToken };
-            return registeredResponse;
-        }
-    }
+			User createdUser = await _userRepository.AddAsync(newUser, cancellationToken);
+
+			AccessToken createdAccessToken = await _authService.CreateAccessToken(createdUser);
+
+			RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(
+				createdUser,
+				request.IpAddress
+			);
+			RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
+
+			RegisteredResponse registeredResponse = new() { AccessToken = createdAccessToken, RefreshToken = addedRefreshToken };
+
+
+
+			var encryptionKey = HashingHelper.DeriveEncryptionKey(
+			request.UserForRegisterDto.Password, createdUser.MasterPasswordSalt
+			);
+
+			string cacheKey = $"EncryptionKey_{createdUser.Id}";
+
+			TokenOptions? tokenConfiguration = _configuration.GetSection("TokenOptions").Get<TokenOptions>();
+
+			_cacheManager.Add(cacheKey, encryptionKey, tokenConfiguration.AccessTokenExpiration);
+
+			return registeredResponse;
+		}
+	}
 }

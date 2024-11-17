@@ -12,7 +12,9 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Core.Localization.Resource.Yaml.DependencyInjection;
 using Core.Security.DependencyInjection;
-using Application.Features.Auth.Commands.Register;
+using Application.Services.UserOperationClaims;
+using Application.Services.OperationClaims;
+using Application.Services.Passwords;
 
 namespace Application;
 
@@ -40,6 +42,9 @@ public static class ApplicationServiceRegistration
 
 		services.AddScoped<IAuthService, AuthManager>();
 		services.AddScoped<IUserService, UserManager>();
+		services.AddScoped<IUserOperationClaimService, UserOperationClaimManager>();
+		services.AddScoped<IOperationClaimService, OperationClaimManager>();
+		services.AddScoped<IPasswordService, PasswordManager>();
 
 		services.AddYamlResourceLocalization();
 

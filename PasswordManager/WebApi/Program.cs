@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Services.AddApplicationServices(
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddPersistenceServices(builder.Configuration);
+
+builder.Services.AddInfrastructureServices();
 
 const string tokenOptionsConfigurationSection = "TokenOptions";
 TokenOptions tokenOptions =

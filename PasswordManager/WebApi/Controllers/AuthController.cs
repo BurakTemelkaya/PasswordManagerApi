@@ -1,6 +1,10 @@
-﻿using Application.Features.Auth.Commands.Register;
+﻿using Application.Features.Auth.Commands.Login;
+using Application.Features.Auth.Commands.Register;
+using Application.Features.Auth.Commands.RevokeToken;
+using Application.Features.Auth.Dtos;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace WebApi.Controllers;
 
@@ -18,13 +22,34 @@ public class AuthController : BaseController
 			?? throw new NullReferenceException($"\"{configurationSection}\" section cannot found in configuration.");
 	}
 
-	[HttpPost("Register")]
-	public async Task<IActionResult> Register([FromBody] RegisterCommand command)
+	[HttpPost("Login")]
+	public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
 	{
-		RegisterCommand registerCommand = new() { Email = command.Email, Password = command.Password, UserName= command.UserName, IpAddress = getIpAddress() };
+		LoginCommand loginCommand = new() { UserForLoginDto = userForLoginDto, IpAddress = getIpAddress() };
+		LoggedResponse result = await Mediator.Send(loginCommand);
+
+		if (result.RefreshToken is not null)
+			setRefreshTokenToCookie(result.RefreshToken);
+
+		return Ok(result.ToHttpResponse());
+	}
+
+	[HttpPost("Register")]
+	public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
+	{
+		RegisterCommand registerCommand = new() { UserForRegisterDto = userForRegisterDto, IpAddress = getIpAddress() };
 		RegisteredResponse result = await Mediator.Send(registerCommand);
 		setRefreshTokenToCookie(result.RefreshToken);
 		return Created(uri: "", result.AccessToken);
+	}
+
+	[HttpPut("RevokeToken")]
+	public async Task<IActionResult> RevokeToken([FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Allow)] string? refreshToken)
+	{
+		RevokeTokenCommand revokeTokenCommand =
+			new() { Token = refreshToken ?? getRefreshTokenFromCookies(), IpAddress = getIpAddress() };
+		RevokedTokenResponse result = await Mediator.Send(revokeTokenCommand);
+		return Ok(result);
 	}
 
 	private string getRefreshTokenFromCookies()

@@ -18,7 +18,7 @@ public class Password : Entity<Guid>
         Name = string.Empty;
         EncryptedPassword = Array.Empty<byte>();
         UserId = default!;
-        User = new();
+        User = null!;
     }
 
     public Password(string name, string description, byte[] encryptedPassword, Guid userId, User user)
