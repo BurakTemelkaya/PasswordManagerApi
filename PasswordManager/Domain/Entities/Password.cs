@@ -9,7 +9,7 @@ public class Password : Entity<Guid>
     public string? Description { get; set; }
     public string? WebSiteUrl { get; set; }
 
-    public int UserId { get; set; }
+    public Guid UserId { get; set; }
 
     public virtual User User { get; set; }
 
@@ -21,7 +21,7 @@ public class Password : Entity<Guid>
         User = new();
     }
 
-    public Password(string name, string description, byte[] encryptedPassword, int userId, User user)
+    public Password(string name, string description, byte[] encryptedPassword, Guid userId, User user)
     {
         Name = name;
         Description = description;

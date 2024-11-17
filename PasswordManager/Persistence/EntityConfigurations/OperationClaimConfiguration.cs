@@ -29,11 +29,13 @@ public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationCla
         return new List<OperationClaim>
         {
             new OperationClaim {
+                Id = Guid.NewGuid(),
                 Name = GeneralOperationClaims.Admin,
                 CreatedDate = DateTime.UtcNow,
             },
             new OperationClaim {
-                Name = GeneralOperationClaims.User,
+				Id = Guid.NewGuid(),
+				Name = GeneralOperationClaims.User,
                 CreatedDate = DateTime.UtcNow,
             },
        };

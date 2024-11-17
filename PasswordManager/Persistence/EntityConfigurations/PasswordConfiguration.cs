@@ -14,12 +14,13 @@ public class PasswordConfiguration : IEntityTypeConfiguration<Password>
         builder.Property(p=> p.Name).HasColumnName("Name").IsRequired().HasMaxLength(128);
         builder.Property(p=> p.Description).HasColumnName("Description").IsRequired().HasMaxLength(256);
         builder.Property(p=> p.EncryptedPassword).HasColumnName("EncryptedPassword").IsRequired().HasMaxLength(1024);
-        builder.Property(p=> p.WebSiteUrl).HasColumnName("Name").HasMaxLength(2000);
+        builder.Property(p=> p.WebSiteUrl).HasColumnName("WebSiteUrl").HasMaxLength(2000);
         builder.Property(p=> p.CreatedDate).IsRequired().HasColumnName("CreatedDate");
         builder.Property(p=> p.UpdatedDate).HasColumnName("UpdatedDate");
         builder.Property(p=> p.DeletedDate).HasColumnName("DeleteDate");
+        builder.Property(p => p.UserId).HasColumnName("UserId").IsRequired();
 
-        builder.HasOne(p => p.User);
+        builder.HasOne(p => p.User).WithMany(u=> u.Passwords).HasForeignKey(p=> p.UserId);
 
         builder.HasQueryFilter(b => !b.DeletedDate.HasValue);
     }
