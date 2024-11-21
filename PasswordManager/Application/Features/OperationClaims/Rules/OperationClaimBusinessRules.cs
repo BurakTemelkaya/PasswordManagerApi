@@ -1,6 +1,5 @@
 ﻿using Application.Features.OperationClaims.Constants;
 using Application.Services.Repositories;
-using Application.Services.Users;
 using Core.Application.Rules;
 using Core.CrossCuttingConcerns.Exception.Types;
 using Core.Localization.Abstraction;

@@ -1,6 +1,8 @@
 ﻿using Application.Features.Passwords.Commands.Create;
+using Application.Features.Passwords.Commands.Delete;
+using Application.Features.Passwords.Commands.Update;
 using Application.Features.Passwords.Dtos;
-using Application.Features.Passwords.Queries.GetPasswordById;
+using Application.Features.Passwords.Queries.GetPasswordList;
 using Core.Application.Requests;
 using Core.Application.Responses;
 using Microsoft.AspNetCore.Mvc;
@@ -22,10 +24,21 @@ namespace WebApi.Controllers
 			return Created("", result);
 		}
 
+		[HttpPut]
+		public async Task<IActionResult> Update([FromBody] UpdatedPasswordDto updatedPasswordDto)
+		{
+			updatedPasswordDto.UserId = getUserIdFromRequest();
+
+			UpdatedPasswordCommand createPasswordCommand = new() { UpdatedPasswordDto = updatedPasswordDto };
+			UpdatedPasswordResponse result = await Mediator.Send(createPasswordCommand);
+
+			return Ok(result);
+		}
+
 		[HttpGet]
 		public async Task<IActionResult> GetList([FromQuery] PageRequest pageRequest)
 		{
-			GetPasswordListQuery getPasswordListQuery = new() { PageRequest = pageRequest };
+			GetPasswordListQuery getPasswordListQuery = new() { PageRequest = pageRequest, UserId = getUserIdFromRequest() };
 			GetListResponse<GetListPasswordDto> result = await Mediator.Send(getPasswordListQuery);
 			return Ok(result);
 		}
@@ -38,6 +51,16 @@ namespace WebApi.Controllers
 			GetByIdPasswordDto response = await Mediator.Send(query);
 
 			return Ok(response);
+		}
+
+		[HttpDelete]
+		public async Task<IActionResult> Delete([FromBody] DeletePasswordCommand deletePasswordCommand )
+		{
+			deletePasswordCommand.UserId = getUserIdFromRequest();
+
+			DeletePasswordResponse result = await Mediator.Send(deletePasswordCommand);
+
+			return Ok(result);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using Application.Features.Auth.Commands.Login;
 using Application.Features.Passwords.Dtos;
+using Application.Features.Passwords.Rules;
 using Application.Services.Passwords;
 using AutoMapper;
 using Core.Application.Pipelines.Authorization;
@@ -31,12 +32,15 @@ public class CreatePasswordCommand : IRequest<CreatePasswordResponse>, ISecuredR
 		private readonly ICacheManager _cacheManager;
 		private readonly IMapper _mapper;
 		private readonly IPasswordService _passwordService;
+		private readonly PasswordBusinessRules _passwordBusinessRules;
 
-		public CreatePasswordCommandHandler(ICacheManager cacheManager, IMapper mapper, IPasswordService passwordService)
+		public CreatePasswordCommandHandler(ICacheManager cacheManager, IMapper mapper, IPasswordService passwordService
+			,PasswordBusinessRules passwordBusinessRules)
 		{
 			_cacheManager = cacheManager;
 			_mapper = mapper;
 			_passwordService = passwordService;
+			_passwordBusinessRules = passwordBusinessRules;
 		}
 		public async Task<CreatePasswordResponse> Handle(CreatePasswordCommand request, CancellationToken cancellationToken)
 		{
@@ -45,10 +49,7 @@ public class CreatePasswordCommand : IRequest<CreatePasswordResponse>, ISecuredR
 			string cacheKey = $"EncryptionKey_{request.CreatePasswordDto.UserId}";
 			var encryptionKey = _cacheManager.Get<byte[]>(cacheKey);
 
-			if (encryptionKey == null)
-			{
-				throw new Exception("Geçici şifreleme anahtarı bulunamadı. Oturum süresi dolmuş olabilir.");
-			}
+			await _passwordBusinessRules.EncryptionKeyNotFound(encryptionKey);
 
 			password.EncryptedPassword = await AES256HashingHelper.EncryptBytesAsync(request.CreatePasswordDto.Password, encryptionKey);
 

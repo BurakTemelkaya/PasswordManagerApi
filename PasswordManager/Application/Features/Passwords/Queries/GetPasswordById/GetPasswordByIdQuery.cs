@@ -7,7 +7,7 @@ using Core.Security.Hashing;
 using Infrastructure.Caching;
 using MediatR;
 
-namespace Application.Features.Passwords.Queries.GetPasswordById;
+namespace Application.Features.Passwords.Queries.GetPasswordList;
 
 public class GetPasswordByIdQuery : IRequest<GetByIdPasswordDto>, ISecuredRequest
 {
