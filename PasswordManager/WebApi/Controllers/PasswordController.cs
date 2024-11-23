@@ -30,7 +30,7 @@ namespace WebApi.Controllers
 			updatedPasswordDto.UserId = getUserIdFromRequest();
 
 			UpdatedPasswordCommand createPasswordCommand = new() { UpdatedPasswordDto = updatedPasswordDto };
-			UpdatedPasswordResponse result = await Mediator.Send(createPasswordCommand);
+			UpdatePasswordResponse result = await Mediator.Send(createPasswordCommand);
 
 			return Ok(result);
 		}

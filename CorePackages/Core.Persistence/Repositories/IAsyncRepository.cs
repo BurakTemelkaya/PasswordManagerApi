@@ -60,4 +60,7 @@ public interface IAsyncRepository<TEntity, TEntityId> : IQuery<TEntity>
         bool permanent = false,
         CancellationToken cancellationToken = default
     );
+
+    Task<int> GetCountAsync(Expression<Func<TEntity, bool>>? predicate = null,
+        Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null, CancellationToken cancellationToken = default);
 }

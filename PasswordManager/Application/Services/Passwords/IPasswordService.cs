@@ -26,7 +26,9 @@ public interface IPasswordService
 		CancellationToken cancellationToken = default
 	);
 
-	Task<Password> AddAsync(Password operationClaim);
-	Task<Password> UpdateAsync(Password operationClaim);
-	Task<Password> DeleteAsync(Password operationClaim, bool permanent = false);
+	Task<Password> AddAsync(Password password);
+	Task<Password> UpdateAsync(Password password);
+	Task<ICollection<Password>> UpdateRangeAsync(ICollection<Password> passwords);
+	Task<Password> DeleteAsync(Password password, bool permanent = false);
+	Task<int> GetPasswordCountByUserAsync(Guid userId);
 }

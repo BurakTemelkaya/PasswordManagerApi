@@ -16,7 +16,7 @@ public class MappingProfiles : Profile
 		CreateMap<Domain.Entities.Password, CreatePasswordDto>().ReverseMap();
 		CreateMap<Domain.Entities.Password, CreatePasswordCommand>().ReverseMap();
 
-		CreateMap<Domain.Entities.Password, UpdatedPasswordResponse>().ReverseMap();
+		CreateMap<Domain.Entities.Password, UpdatePasswordResponse>().ReverseMap();
 		CreateMap<Domain.Entities.Password, UpdatedPasswordDto>().ReverseMap();
 		CreateMap<Domain.Entities.Password, UpdatedPasswordCommand>().ReverseMap();
 

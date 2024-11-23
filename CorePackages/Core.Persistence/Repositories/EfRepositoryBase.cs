@@ -265,6 +265,18 @@ public class EfRepositoryBase<TEntity, TEntityId, TContext>
         return queryable.ToPaginate(index, size);
     }
 
+    public async Task<int> GetCountAsync(Expression<Func<TEntity, bool>>? predicate = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null, CancellationToken cancellationToken = default)
+    {
+        IQueryable<TEntity> queryable = Query();
+
+        if (include != null)
+            queryable = include(queryable);
+        if (predicate != null)
+            queryable = queryable.Where(predicate);
+
+        return await queryable.CountAsync(cancellationToken);
+    }
+
     public IPaginate<TEntity> GetListByDynamic(
         DynamicQuery dynamic,
         Expression<Func<TEntity, bool>>? predicate = null,

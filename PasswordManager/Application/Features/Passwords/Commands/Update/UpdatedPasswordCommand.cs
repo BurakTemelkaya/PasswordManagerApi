@@ -1,4 +1,5 @@
-﻿using Application.Features.Passwords.Dtos;
+﻿using Application.Features.Passwords.Constants;
+using Application.Features.Passwords.Dtos;
 using Application.Features.Passwords.Rules;
 using Application.Services.Passwords;
 using AutoMapper;
@@ -10,7 +11,7 @@ using MediatR;
 
 namespace Application.Features.Passwords.Commands.Update;
 
-public class UpdatedPasswordCommand : IRequest<UpdatedPasswordResponse>, ISecuredRequest
+public class UpdatedPasswordCommand : IRequest<UpdatePasswordResponse>, ISecuredRequest
 {
 	public UpdatedPasswordDto UpdatedPasswordDto { get; set; }
 
@@ -26,7 +27,7 @@ public class UpdatedPasswordCommand : IRequest<UpdatedPasswordResponse>, ISecure
 		UpdatedPasswordDto = updatedPasswordDto;
 	}
 
-	public class UpdatePasswordCommandHandler : IRequestHandler<UpdatedPasswordCommand, UpdatedPasswordResponse>
+	public class UpdatePasswordCommandHandler : IRequestHandler<UpdatedPasswordCommand, UpdatePasswordResponse>
 	{
 		private readonly ICacheManager _cacheManager;
 		private readonly IMapper _mapper;
@@ -41,7 +42,7 @@ public class UpdatedPasswordCommand : IRequest<UpdatedPasswordResponse>, ISecure
 			_passwordService = passwordService;
 			_passwordBusinessRules = passwordBusinessRules;
 		}
-		public async Task<UpdatedPasswordResponse> Handle(UpdatedPasswordCommand request, CancellationToken cancellationToken)
+		public async Task<UpdatePasswordResponse> Handle(UpdatedPasswordCommand request, CancellationToken cancellationToken)
 		{
 			Domain.Entities.Password? password = await _passwordService.GetAsync(x => x.Id == request.UpdatedPasswordDto.Id);
 
@@ -51,8 +52,8 @@ public class UpdatedPasswordCommand : IRequest<UpdatedPasswordResponse>, ISecure
 
 			password = _mapper.Map(request.UpdatedPasswordDto, password);
 
-			string cacheKey = $"EncryptionKey_{request.UpdatedPasswordDto.UserId}";
-			byte[] encryptionKey = _cacheManager.Get<byte[]>(cacheKey);
+            string cacheKey = PasswordMessages.GetEncryptionCacheKey(request.UpdatedPasswordDto.UserId!.Value);
+            byte[] encryptionKey = _cacheManager.Get<byte[]>(cacheKey);
 
 			await _passwordBusinessRules.EncryptionKeyNotFound(encryptionKey);
 
@@ -60,7 +61,7 @@ public class UpdatedPasswordCommand : IRequest<UpdatedPasswordResponse>, ISecure
 
 			Domain.Entities.Password updatedPassword = await _passwordService.UpdateAsync(password);
 
-			UpdatedPasswordResponse updatedPasswordResponse = _mapper.Map<UpdatedPasswordResponse>(updatedPassword);
+			UpdatePasswordResponse updatedPasswordResponse = _mapper.Map<UpdatePasswordResponse>(updatedPassword);
 
 			return updatedPasswordResponse;
 		}

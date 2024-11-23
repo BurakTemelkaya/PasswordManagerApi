@@ -8,6 +8,7 @@ using Core.Security.Constants;
 using Core.Security.Hashing;
 using Infrastructure.Caching;
 using MediatR;
+using Application.Features.Passwords.Constants;
 
 namespace Application.Features.Passwords.Commands.Create;
 
@@ -46,8 +47,8 @@ public class CreatePasswordCommand : IRequest<CreatePasswordResponse>, ISecuredR
 		{
 			Domain.Entities.Password password = _mapper.Map<Domain.Entities.Password>(request.CreatePasswordDto);
 
-			string cacheKey = $"EncryptionKey_{request.CreatePasswordDto.UserId}";
-			var encryptionKey = _cacheManager.Get<byte[]>(cacheKey);
+			string cacheKey = PasswordMessages.GetEncryptionCacheKey(request.CreatePasswordDto.UserId!.Value);
+			byte[] encryptionKey = _cacheManager.Get<byte[]>(cacheKey);
 
 			await _passwordBusinessRules.EncryptionKeyNotFound(encryptionKey);
 

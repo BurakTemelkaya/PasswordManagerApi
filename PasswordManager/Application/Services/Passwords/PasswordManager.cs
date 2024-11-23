@@ -54,4 +54,14 @@ public class PasswordManager : IPasswordService
 		Password updatedPassword = await _passwordRepository.UpdateAsync(operationClaim);
 		return	updatedPassword;
 	}
+
+	public async Task<int> GetPasswordCountByUserAsync(Guid userId)
+	{
+		return await _passwordRepository.GetCountAsync(x=> x.UserId == userId);
+	}
+
+    public async Task<ICollection<Password>> UpdateRangeAsync(ICollection<Password> passwords)
+    {
+        return await _passwordRepository.UpdateRangeAsync(passwords);
+    }
 }

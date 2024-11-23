@@ -10,7 +10,7 @@ namespace Application.Services.AuthService;
 public class AuthManager : IAuthService
 {
     private readonly IRefreshTokenRepository _refreshTokenRepository;
-    private readonly ITokenHelper<Guid, Guid,Guid> _tokenHelper;
+    private readonly ITokenHelper<Guid, Guid, Guid> _tokenHelper;
     private readonly TokenOptions _tokenOptions;
     private readonly IMapper _mapper;
     private readonly IUserOperationClaimRepository _userOperationClaimRepository;
@@ -81,7 +81,7 @@ public class AuthManager : IAuthService
 
     public async Task<RefreshToken> RotateRefreshToken(User user, RefreshToken refreshToken, string ipAddress)
     {
-        Core.Security.Entities.RefreshToken<Guid,Guid> newCoreRefreshToken = _tokenHelper.CreateRefreshToken(
+        Core.Security.Entities.RefreshToken<Guid, Guid> newCoreRefreshToken = _tokenHelper.CreateRefreshToken(
             user,
             ipAddress
         );
@@ -104,7 +104,7 @@ public class AuthManager : IAuthService
 
     public Task<RefreshToken> CreateRefreshToken(User user, string ipAddress)
     {
-        Core.Security.Entities.RefreshToken<Guid,Guid> coreRefreshToken = _tokenHelper.CreateRefreshToken(
+        Core.Security.Entities.RefreshToken<Guid, Guid> coreRefreshToken = _tokenHelper.CreateRefreshToken(
             user,
             ipAddress
         );
