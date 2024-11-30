@@ -1,29 +1,25 @@
 ﻿namespace Application.Features.Passwords.Dtos;
 
-public class UpdatedPasswordDto
+public class ImportPasswordDto
 {
-    public Guid Id { get; set; }
     public string Name { get; set; }
     public string? UserName { get; set; }
     public string Password { get; set; }
     public string? Description { get; set; }
     public string? WebSiteUrl { get; set; }
-    public Guid? UserId { get; set; }
 
-    public UpdatedPasswordDto()
+    public ImportPasswordDto()
     {
         Name = string.Empty;
         Password = string.Empty;
     }
 
-    public UpdatedPasswordDto(Guid id, string name, string userName, string password, string? description, string? webSiteUrl, Guid? userId)
+    public ImportPasswordDto(string name, string userName, string password, string? description, string? webSiteUrl)
     {
-        Id = id;
         Name = name;
         UserName = userName;
         Password = password;
         Description = description;
         WebSiteUrl = webSiteUrl;
-        UserId = userId;
     }
 }

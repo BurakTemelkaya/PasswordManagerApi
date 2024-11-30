@@ -9,6 +9,7 @@ public class CreatePasswordValidator : AbstractValidator<CreatePasswordCommand>
     public CreatePasswordValidator()
     {
         RuleFor(p=> p.CreatePasswordDto.Name).MinimumLength(3).NotEmpty();
+		RuleFor(p => p.CreatePasswordDto.UserName).MaximumLength(50).NotEmpty();
 		RuleFor(c => c.CreatePasswordDto.Password)
 			.NotEmpty()
 			.MinimumLength(6)

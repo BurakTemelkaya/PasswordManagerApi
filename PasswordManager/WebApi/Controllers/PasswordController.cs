@@ -1,5 +1,6 @@
 ﻿using Application.Features.Passwords.Commands.Create;
 using Application.Features.Passwords.Commands.Delete;
+using Application.Features.Passwords.Commands.Import;
 using Application.Features.Passwords.Commands.Update;
 using Application.Features.Passwords.Dtos;
 using Application.Features.Passwords.Queries.GetPasswordList;
@@ -59,6 +60,16 @@ namespace WebApi.Controllers
 			deletePasswordCommand.UserId = getUserIdFromRequest();
 
 			DeletePasswordResponse result = await Mediator.Send(deletePasswordCommand);
+
+			return Ok(result);
+		}
+
+		[HttpPost("Import")]
+		public async Task<IActionResult> ImportPasswords([FromBody] ImportPasswordCommand importPasswordCommand)
+		{
+			importPasswordCommand.UserId = getUserIdFromRequest();
+
+			ImportPasswordResponse result = await Mediator.Send(importPasswordCommand);
 
 			return Ok(result);
 		}

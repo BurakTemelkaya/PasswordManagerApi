@@ -6,6 +6,7 @@ public class Password : Entity<Guid>
 {
     public string Name { get; set; }
     public byte[] EncryptedPassword { get; set; }
+    public string? UserName { get; set; }
     public string? Description { get; set; }
     public string? WebSiteUrl { get; set; }
 
@@ -21,9 +22,10 @@ public class Password : Entity<Guid>
         User = null!;
     }
 
-    public Password(string name, string description, byte[] encryptedPassword, Guid userId, User user)
+    public Password(string name, string userName, string description, byte[] encryptedPassword, Guid userId, User user)
     {
         Name = name;
+        UserName = userName;
         Description = description;
         EncryptedPassword = encryptedPassword;
         UserId = userId;

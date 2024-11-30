@@ -1,5 +1,6 @@
 ﻿using Application.Features.Passwords.Commands.Create;
 using Application.Features.Passwords.Commands.Delete;
+using Application.Features.Passwords.Commands.Import;
 using Application.Features.Passwords.Commands.Update;
 using Application.Features.Passwords.Dtos;
 using AutoMapper;
@@ -26,5 +27,8 @@ public class MappingProfiles : Profile
 		CreateMap<IPaginate<Domain.Entities.Password>, GetListResponse<GetListPasswordDto>>().ReverseMap();
 
 		CreateMap<Domain.Entities.Password, DeletePasswordResponse>().ReverseMap();
-	}
+
+        CreateMap<Domain.Entities.Password, ImportPasswordDto>().ReverseMap();
+        CreateMap<Domain.Entities.Password, ImportPasswordCommand>().ReverseMap();
+    }
 }

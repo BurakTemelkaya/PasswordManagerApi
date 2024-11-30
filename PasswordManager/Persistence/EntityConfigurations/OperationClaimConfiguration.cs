@@ -29,14 +29,14 @@ public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationCla
         return new List<OperationClaim>
         {
             new OperationClaim {
-                Id = Guid.NewGuid(),
+                Id = Guid.Parse("F238078D-892D-41C3-A3B3-AABEA7FBCD23"),
                 Name = GeneralOperationClaims.Admin,
-                CreatedDate = DateTime.UtcNow,
+                CreatedDate = new DateTime(2024, 11, 17, 18, 52, 42, 67, DateTimeKind.Utc).AddTicks(1507),
             },
             new OperationClaim {
-				Id = Guid.NewGuid(),
+				Id = Guid.Parse("450B017E-CD03-41FE-A9DE-F9B3CD3E534D"),
 				Name = GeneralOperationClaims.User,
-                CreatedDate = DateTime.UtcNow,
+                CreatedDate = new DateTime(2024, 11, 17, 18, 52, 42, 67, DateTimeKind.Utc).AddTicks(1515),
             },
        };
     }
