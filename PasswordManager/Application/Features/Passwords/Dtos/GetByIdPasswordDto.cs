@@ -3,30 +3,36 @@
 public class GetByIdPasswordDto
 {
 	public Guid Id { get; set; }
-	public byte[] Name { get; set; }
-	public byte[] Password { get; set; }
-	public string? Description { get; set; }
-	public string? WebSiteUrl { get; set; }
-	public DateTime CreatedDate { get; set; }
+    public byte[] EncryptedName { get; set; }
+    public byte[]? EncryptedUserName { get; set; }
+    public byte[] EncryptedPassword { get; set; }
+    public byte[]? EncryptedDescription { get; set; }
+    public byte[]? EncryptedWebSiteUrl { get; set; }
+    public byte[] Iv { get; set; }
+    public Guid? UserId { get; set; }
+    public DateTime CreatedDate { get; set; }
 	public DateTime? UpdatedDate { get; set; }
 
 	public GetByIdPasswordDto()
 	{
 		Id = Guid.NewGuid();
-		Name = [];
-		Password = [];
-		CreatedDate = DateTime.UtcNow;
+		EncryptedName = [];
+		EncryptedPassword = [];
+		Iv = [];
+        CreatedDate = DateTime.UtcNow;
 	}
 
-	public GetByIdPasswordDto(Guid id, byte[] name, byte[] password, DateTime createdDate,
-		string? description, string? webSiteUrl, DateTime? updatedDate)
-	{
-		Id = id;
-		Name = name;
-		Password = password;
-		Description = description;
-		WebSiteUrl = webSiteUrl;
-		CreatedDate = createdDate;
-		UpdatedDate = updatedDate;
-	}
+    public GetByIdPasswordDto(Guid id, byte[] encryptedName, byte[]? encryptedUserName, byte[] encryptedPassword, byte[]? encryptedDescription, byte[]? encryptedWebSiteUrl, byte[] iv, Guid? userId, DateTime createdDate, DateTime? updatedDate)
+    {
+        Id = id;
+        EncryptedName = encryptedName;
+        EncryptedUserName = encryptedUserName;
+        EncryptedPassword = encryptedPassword;
+        EncryptedDescription = encryptedDescription;
+        EncryptedWebSiteUrl = encryptedWebSiteUrl;
+        Iv = iv;
+        UserId = userId;
+        CreatedDate = createdDate;
+        UpdatedDate = updatedDate;
+    }
 }

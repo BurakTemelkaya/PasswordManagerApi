@@ -1,14 +1,9 @@
-﻿using Application.Features.Auth.Commands.Login;
-using Application.Features.Passwords.Dtos;
-using Application.Features.Passwords.Rules;
+﻿using Application.Features.Passwords.Dtos;
 using Application.Services.Passwords;
 using AutoMapper;
 using Core.Application.Pipelines.Authorization;
 using Core.Security.Constants;
-using Core.Security.Hashing;
-using Infrastructure.Caching;
 using MediatR;
-using Application.Features.Passwords.Constants;
 
 namespace Application.Features.Passwords.Commands.Create;
 
@@ -30,24 +25,20 @@ public class CreatePasswordCommand : IRequest<CreatePasswordResponse>, ISecuredR
 
 	public class CreatePasswordCommandHandler : IRequestHandler<CreatePasswordCommand, CreatePasswordResponse>
 	{
-		private readonly ICacheManager _cacheManager;
 		private readonly IMapper _mapper;
 		private readonly IPasswordService _passwordService;
-		private readonly PasswordBusinessRules _passwordBusinessRules;
 
-		public CreatePasswordCommandHandler(ICacheManager cacheManager, IMapper mapper, IPasswordService passwordService
-			,PasswordBusinessRules passwordBusinessRules)
+		public CreatePasswordCommandHandler(IMapper mapper, IPasswordService passwordService)
 		{
-			_cacheManager = cacheManager;
 			_mapper = mapper;
 			_passwordService = passwordService;
-			_passwordBusinessRules = passwordBusinessRules;
 		}
 		public async Task<CreatePasswordResponse> Handle(CreatePasswordCommand request, CancellationToken cancellationToken)
 		{
 			Domain.Entities.Password password = _mapper.Map<Domain.Entities.Password>(request.CreatePasswordDto);
 			
 			Domain.Entities.Password addedPassword = await _passwordService.AddAsync(password);
+
 			CreatePasswordResponse createPasswordResponse = _mapper.Map<CreatePasswordResponse>(addedPassword);
 
 			return createPasswordResponse;

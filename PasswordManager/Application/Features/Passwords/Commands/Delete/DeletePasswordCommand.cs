@@ -1,5 +1,4 @@
-﻿using Application.Features.Passwords.Commands.Create;
-using Application.Features.Passwords.Rules;
+﻿using Application.Features.Passwords.Rules;
 using Application.Services.Passwords;
 using AutoMapper;
 using Core.Application.Pipelines.Authorization;
@@ -13,7 +12,7 @@ public class DeletePasswordCommand : IRequest<DeletePasswordResponse>, ISecuredR
 {
 	public Guid Id { get; set; }
 	public Guid? UserId { get; set; }
-	public string[] Roles => new string[] { GeneralOperationClaims.Admin, GeneralOperationClaims.User };
+    public string[] Roles => [GeneralOperationClaims.Admin, GeneralOperationClaims.User];
 
 	public class DeletePasswordCommandHandler : IRequestHandler<DeletePasswordCommand, DeletePasswordResponse>
 	{

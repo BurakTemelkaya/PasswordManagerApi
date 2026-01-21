@@ -4,11 +4,12 @@ namespace Domain.Entities;
 
 public class Password : Entity<Guid>
 {
-    public byte[] Name { get; set; }
+    public byte[] EncryptedName { get; set; }
+    public byte[]? EncryptedUserName { get; set; }
     public byte[] EncryptedPassword { get; set; }
-    public byte[]? UserName { get; set; }
-    public string? Description { get; set; }
-    public string? WebSiteUrl { get; set; }
+    public byte[]? EncryptedDescription { get; set; }
+    public byte[]? EncryptedWebSiteUrl { get; set; }
+    public byte[] Iv { get; set; }
 
     public Guid UserId { get; set; }
 
@@ -16,18 +17,21 @@ public class Password : Entity<Guid>
 
     public Password()
     {
-        Name = [];
+        EncryptedName = [];
         EncryptedPassword = [];
         UserId = default!;
         User = null!;
+        Iv = [];
     }
 
-    public Password(byte[] name, byte[] encryptedPassword, byte[]? userName, string description, Guid userId, User user)
+    public Password(byte[] encryptedName, byte[]? encryptedUserName, byte[] encryptedPassword, byte[]? encryptedDescription, byte[]? encryptedWebSiteUrl, byte[] ıv, Guid userId, User user)
     {
-        Name = name;
+        EncryptedName = encryptedName;
+        EncryptedUserName = encryptedUserName;
         EncryptedPassword = encryptedPassword;
-        UserName = userName;
-        Description = description;
+        EncryptedDescription = encryptedDescription;
+        EncryptedWebSiteUrl = encryptedWebSiteUrl;
+        Iv = ıv;
         UserId = userId;
         User = user;
     }

@@ -72,13 +72,6 @@ public class LoginCommand : IRequest<LoggedResponse>
 			loggedResponse.AccessToken = createdAccessToken;
 			loggedResponse.RefreshToken = addedRefreshToken;
 
-            byte[] encryptionKey = HashingHelper.DeriveEncryptionKey(
-				request.UserForLoginDto.Password, user.MasterPasswordSalt
-			);
-			
-			// Client'ın kullanması için encryption key'i response'a ekle
-			loggedResponse.EncryptionKey = Convert.ToBase64String(encryptionKey);
-
 			return loggedResponse;
 		}
 	}

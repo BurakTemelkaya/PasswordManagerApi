@@ -2,24 +2,29 @@
 
 public class ImportPasswordDto
 {
-    public string Name { get; set; }
-    public string? UserName { get; set; }
-    public string Password { get; set; }
-    public string? Description { get; set; }
-    public string? WebSiteUrl { get; set; }
+    public byte[] EncryptedName { get; set; }
+    public byte[]? EncryptedUserName { get; set; }
+    public byte[] EncryptedPassword { get; set; }
+    public byte[]? EncryptedDescription { get; set; }
+    public byte[]? EncryptedWebSiteUrl { get; set; }
+    public byte[] Iv { get; set; }
+    public Guid? UserId { get; set; }
 
     public ImportPasswordDto()
     {
-        Name = string.Empty;
-        Password = string.Empty;
+        EncryptedName = [];
+        EncryptedPassword = [];
+        Iv = [];
     }
 
-    public ImportPasswordDto(string name, string userName, string password, string? description, string? webSiteUrl)
+    public ImportPasswordDto(byte[] encryptedName, byte[]? encryptedUserName, byte[] encryptedPassword, byte[]? encryptedDescription, byte[]? encryptedWebSiteUrl, byte[] iv, Guid? userId)
     {
-        Name = name;
-        UserName = userName;
-        Password = password;
-        Description = description;
-        WebSiteUrl = webSiteUrl;
+        EncryptedName = encryptedName;
+        EncryptedUserName = encryptedUserName;
+        EncryptedPassword = encryptedPassword;
+        EncryptedDescription = encryptedDescription;
+        EncryptedWebSiteUrl = encryptedWebSiteUrl;
+        Iv = iv;
+        UserId = userId;
     }
 }

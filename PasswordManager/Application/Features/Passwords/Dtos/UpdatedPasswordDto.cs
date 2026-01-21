@@ -3,27 +3,30 @@
 public class UpdatedPasswordDto
 {
     public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string? UserName { get; set; }
-    public string Password { get; set; }
-    public string? Description { get; set; }
-    public string? WebSiteUrl { get; set; }
+    public byte[] EncryptedName { get; set; }
+    public byte[]? EncryptedUserName { get; set; }
+    public byte[] EncryptedPassword { get; set; }
+    public byte[]? EncryptedDescription { get; set; }
+    public byte[]? EncryptedWebSiteUrl { get; set; }
+    public byte[] Iv { get; set; }
     public Guid? UserId { get; set; }
 
     public UpdatedPasswordDto()
     {
-        Name = string.Empty;
-        Password = string.Empty;
+        EncryptedName = [];
+        EncryptedPassword = [];
+        Iv = [];
     }
 
-    public UpdatedPasswordDto(Guid id, string name, string userName, string password, string? description, string? webSiteUrl, Guid? userId)
+    public UpdatedPasswordDto(Guid ıd, byte[] encryptedName, byte[]? encryptedUserName, byte[] encryptedPassword, byte[]? encryptedDescription, byte[]? encryptedWebSiteUrl, byte[] ıv, Guid? userId)
     {
-        Id = id;
-        Name = name;
-        UserName = userName;
-        Password = password;
-        Description = description;
-        WebSiteUrl = webSiteUrl;
+        Id = ıd;
+        EncryptedName = encryptedName;
+        EncryptedUserName = encryptedUserName;
+        EncryptedPassword = encryptedPassword;
+        EncryptedDescription = encryptedDescription;
+        EncryptedWebSiteUrl = encryptedWebSiteUrl;
+        Iv = ıv;
         UserId = userId;
     }
 }
