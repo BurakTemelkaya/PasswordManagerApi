@@ -74,12 +74,12 @@ public class RegisterCommand : IRequest<RegisteredResponse>
 			OperationClaim? userRole = await _operationClaimService.GetAsync(x => x.Name == GeneralOperationClaims.User
 			, cancellationToken: cancellationToken);
 
-			List<UserOperationClaim> addedClaims = new(){
+            List<UserOperationClaim> addedClaims = [
 				new()
 				{
 					OperationClaimId= userRole!.Id,
 				}
-			};
+			];
 
 			User newUser =
 				new()
@@ -102,18 +102,6 @@ public class RegisterCommand : IRequest<RegisteredResponse>
 			RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
 
 			RegisteredResponse registeredResponse = new() { AccessToken = createdAccessToken, RefreshToken = addedRefreshToken };
-
-
-
-			var encryptionKey = HashingHelper.DeriveEncryptionKey(
-			request.UserForRegisterDto.Password, createdUser.MasterPasswordSalt
-			);
-
-			string cacheKey = $"EncryptionKey_{createdUser.Id}";
-
-			TokenOptions? tokenConfiguration = _configuration.GetSection("TokenOptions").Get<TokenOptions>();
-
-			_cacheManager.Add(cacheKey, encryptionKey, tokenConfiguration.AccessTokenExpiration);
 
 			return registeredResponse;
 		}

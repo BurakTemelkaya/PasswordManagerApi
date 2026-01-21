@@ -3,8 +3,8 @@
 public class GetByIdPasswordDto
 {
 	public Guid Id { get; set; }
-	public string Name { get; set; }
-	public string Password { get; set; }
+	public byte[] Name { get; set; }
+	public byte[] Password { get; set; }
 	public string? Description { get; set; }
 	public string? WebSiteUrl { get; set; }
 	public DateTime CreatedDate { get; set; }
@@ -13,12 +13,12 @@ public class GetByIdPasswordDto
 	public GetByIdPasswordDto()
 	{
 		Id = Guid.NewGuid();
-		Name = string.Empty;
-		Password = string.Empty;
+		Name = [];
+		Password = [];
 		CreatedDate = DateTime.UtcNow;
 	}
 
-	public GetByIdPasswordDto(Guid id, string name, string password, DateTime createdDate,
+	public GetByIdPasswordDto(Guid id, byte[] name, byte[] password, DateTime createdDate,
 		string? description, string? webSiteUrl, DateTime? updatedDate)
 	{
 		Id = id;

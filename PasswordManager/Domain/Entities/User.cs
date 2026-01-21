@@ -1,6 +1,4 @@
-﻿using Core.Persistence.Repositories;
-
-namespace Domain.Entities;
+﻿namespace Domain.Entities;
 
 public class User : Core.Security.Entities.User<Guid>
 {
@@ -15,8 +13,8 @@ public class User : Core.Security.Entities.User<Guid>
     {
         UserName = string.Empty;
         Email = string.Empty;
-        MasterPasswordHash = Array.Empty<byte>();
-        MasterPasswordSalt = Array.Empty<byte>();
+        MasterPasswordHash = [];
+        MasterPasswordSalt = [];
     }
 
     public User(string userName, string email, byte[] masterPasswordHash, byte[] masterPasswordSalt, ICollection<Password> passwords)

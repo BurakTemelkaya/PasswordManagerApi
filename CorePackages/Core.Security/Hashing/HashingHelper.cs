@@ -69,4 +69,3 @@ public static class HashingHelper
 		return pbkdf2.GetBytes(HashSize); // 256-bit Key
 	}
 }
-

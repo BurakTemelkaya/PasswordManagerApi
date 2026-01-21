@@ -4,9 +4,9 @@ namespace Domain.Entities;
 
 public class Password : Entity<Guid>
 {
-    public string Name { get; set; }
+    public byte[] Name { get; set; }
     public byte[] EncryptedPassword { get; set; }
-    public string? UserName { get; set; }
+    public byte[]? UserName { get; set; }
     public string? Description { get; set; }
     public string? WebSiteUrl { get; set; }
 
@@ -16,18 +16,18 @@ public class Password : Entity<Guid>
 
     public Password()
     {
-        Name = string.Empty;
-        EncryptedPassword = Array.Empty<byte>();
+        Name = [];
+        EncryptedPassword = [];
         UserId = default!;
         User = null!;
     }
 
-    public Password(string name, string userName, string description, byte[] encryptedPassword, Guid userId, User user)
+    public Password(byte[] name, byte[] encryptedPassword, byte[]? userName, string description, Guid userId, User user)
     {
         Name = name;
+        EncryptedPassword = encryptedPassword;
         UserName = userName;
         Description = description;
-        EncryptedPassword = encryptedPassword;
         UserId = userId;
         User = user;
     }

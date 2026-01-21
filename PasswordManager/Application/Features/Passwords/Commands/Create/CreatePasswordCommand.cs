@@ -46,16 +46,8 @@ public class CreatePasswordCommand : IRequest<CreatePasswordResponse>, ISecuredR
 		public async Task<CreatePasswordResponse> Handle(CreatePasswordCommand request, CancellationToken cancellationToken)
 		{
 			Domain.Entities.Password password = _mapper.Map<Domain.Entities.Password>(request.CreatePasswordDto);
-
-			string cacheKey = PasswordMessages.GetEncryptionCacheKey(request.CreatePasswordDto.UserId!.Value);
-			byte[] encryptionKey = _cacheManager.Get<byte[]>(cacheKey);
-
-			await _passwordBusinessRules.EncryptionKeyNotFound(encryptionKey);
-
-			password.EncryptedPassword = await AES256HashingHelper.EncryptBytesAsync(request.CreatePasswordDto.Password, encryptionKey);
-
+			
 			Domain.Entities.Password addedPassword = await _passwordService.AddAsync(password);
-
 			CreatePasswordResponse createPasswordResponse = _mapper.Map<CreatePasswordResponse>(addedPassword);
 
 			return createPasswordResponse;

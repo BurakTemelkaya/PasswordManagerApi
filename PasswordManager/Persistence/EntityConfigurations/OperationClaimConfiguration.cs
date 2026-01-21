@@ -20,24 +20,22 @@ public class OperationClaimConfiguration : IEntityTypeConfiguration<OperationCla
         builder.HasQueryFilter(oc => !oc.DeletedDate.HasValue);
 
         builder.HasData(GetSeeds());
-
-        builder.HasBaseType((string)null!);
     }
 
     private List<OperationClaim> GetSeeds()
     {
-        return new List<OperationClaim>
-        {
-            new OperationClaim {
+        return
+        [
+            new() {
                 Id = Guid.Parse("F238078D-892D-41C3-A3B3-AABEA7FBCD23"),
                 Name = GeneralOperationClaims.Admin,
                 CreatedDate = new DateTime(2024, 11, 17, 18, 52, 42, 67, DateTimeKind.Utc).AddTicks(1507),
             },
-            new OperationClaim {
+            new() {
 				Id = Guid.Parse("450B017E-CD03-41FE-A9DE-F9B3CD3E534D"),
 				Name = GeneralOperationClaims.User,
                 CreatedDate = new DateTime(2024, 11, 17, 18, 52, 42, 67, DateTimeKind.Utc).AddTicks(1515),
             },
-       };
+       ];
     }
 }
