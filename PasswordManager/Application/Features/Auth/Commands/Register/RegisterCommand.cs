@@ -38,7 +38,6 @@ public class RegisterCommand : IRequest<RegisteredResponse>
 		private readonly AuthBusinessRules _authBusinessRules;
 		private readonly ICacheManager _cacheManager;
 		private readonly IConfiguration _configuration;
-		private readonly IUserOperationClaimService _userOperationClaimService;
 		private readonly IOperationClaimService _operationClaimService;
 
 		public RegisterCommandHandler(
@@ -47,7 +46,6 @@ public class RegisterCommand : IRequest<RegisteredResponse>
 			AuthBusinessRules authBusinessRules,
 			ICacheManager cacheManager,
 			IConfiguration configuration,
-			IUserOperationClaimService userOperationClaimService,
 			IOperationClaimService operationCliamService
 
 		)
@@ -57,7 +55,6 @@ public class RegisterCommand : IRequest<RegisteredResponse>
 			_authBusinessRules = authBusinessRules;
 			_cacheManager = cacheManager;
 			_configuration = configuration;
-			_userOperationClaimService = userOperationClaimService;
 			_operationClaimService = operationCliamService;
 		}
 

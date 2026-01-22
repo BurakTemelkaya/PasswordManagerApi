@@ -2,11 +2,12 @@ using Application;
 using Core.Security.Encryption;
 using Core.Security.JWT;
 using Core.Security.WebApi.Swagger.Extensions;
+using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
-using Infrastructure;
+using WebApi;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,9 +48,6 @@ builder
 		};
 	});
 
-
-builder.Services.AddDistributedMemoryCache();
-
 builder.Services.AddSwaggerGen(opt =>
 {
 	opt.AddSecurityDefinition(
@@ -86,5 +84,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors(
+    opt =>
+        opt.WithOrigins(app.Configuration.GetSection("WebAPIConfiguration").Get<WebApiConfiguration>()!.AllowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+);
 
 app.Run();
