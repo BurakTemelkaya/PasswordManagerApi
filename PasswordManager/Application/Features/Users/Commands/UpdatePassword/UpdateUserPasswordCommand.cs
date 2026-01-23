@@ -1,69 +1,85 @@
-﻿using Application.Features.Auth.Rules;
-using Application.Features.Passwords.Constants;
-using Application.Features.Passwords.Rules;
+﻿using Application.Features.Passwords.Constants;
+using Application.Features.Passwords.Dtos;
 using Application.Features.Users.Rules;
 using Application.Services.Passwords;
 using Application.Services.Users;
 using AutoMapper;
 using Core.Application.Pipelines.Authorization;
-using Core.Persistence.Paging;
+using Core.CrossCuttingConcerns.Exception.Types;
 using Core.Security.Constants;
 using Core.Security.Hashing;
-using Core.Security.JWT;
-using Domain.Entities;
-using Infrastructure.Caching;
 using MediatR;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Features.Users.Commands.UpdatePassword;
 
 public class UpdateUserPasswordCommand : IRequest<UpdateUserPasswordResponse>, ISecuredRequest
 {
-    public string[] Roles => new string[] { GeneralOperationClaims.User };
+    public string[] Roles => [GeneralOperationClaims.User];
 
     public Guid? UserId { get; set; }
-    public string ExistPassword { get; set; }
-    public string NewPassword { get; set; }
+    public byte[] ExistPassword { get; set; }
+    public byte[] NewPassword { get; set; }
+    public ICollection<UpdatedPasswordDto> UpdatedPasswords { get; set; }
 
     public UpdateUserPasswordCommand()
     {
-        ExistPassword = string.Empty;
-        NewPassword = string.Empty;
+        ExistPassword = [];
+        NewPassword = [];
+        UpdatedPasswords = new HashSet<UpdatedPasswordDto>();
     }
 
-    public UpdateUserPasswordCommand(Guid? userId, string existPassword, string newPassword)
+    public UpdateUserPasswordCommand(Guid? userId, byte[] existPassword, byte[] newPassword, ICollection<UpdatedPasswordDto> updatedPasswords)
     {
         UserId = userId;
         ExistPassword = existPassword;
         NewPassword = newPassword;
+        UpdatedPasswords = updatedPasswords;
     }
 
     public class UpdateUserPasswordCommandHandler : IRequestHandler<UpdateUserPasswordCommand, UpdateUserPasswordResponse>
     {
         private readonly IUserService _userService;
-        private readonly UserBusinessRules _userBusinessRules;
         private readonly IMapper _mapper;
-        private readonly ICacheManager _cacheManager;
         private readonly IPasswordService _passwordService;
+        private readonly UserBusinessRules _userBusinessRules;
 
-        public UpdateUserPasswordCommandHandler(IUserService userService, UserBusinessRules userBusinessRules, IMapper mapper, ICacheManager cacheManager
-            , IPasswordService passwordService)
+        public UpdateUserPasswordCommandHandler(IUserService userService, IMapper mapper
+            , IPasswordService passwordService,UserBusinessRules userBusinessRules)
         {
             _userService = userService;
-            _userBusinessRules = userBusinessRules;
             _mapper = mapper;
-            _cacheManager = cacheManager;
             _passwordService = passwordService;
+            _userBusinessRules = userBusinessRules;
         }
 
         public async Task<UpdateUserPasswordResponse> Handle(UpdateUserPasswordCommand request, CancellationToken cancellationToken)
         {
             Domain.Entities.User? user = await _userService.GetAsync(
                 predicate: u => u.Id.Equals(request.UserId),
+                include: u => u.Include(u => u.Passwords),
+                enableTracking: true,
                 cancellationToken: cancellationToken
             );
-            await _userBusinessRules.UserShouldBeExistsWhenSelected(user);
-            await _userBusinessRules.UserPasswordShouldBeMatched(user!, request.ExistPassword);
+
+            if (user == null)
+            {
+                throw new BusinessException("User not found.");
+            }
+
+            await _userBusinessRules.UserPasswordShouldBeMatched(user, request.ExistPassword);
+
+            // Kullanıcının sahip olduğu tüm şifre ID'lerini bir HashSet'e alıyoruz (Hızlı arama için)
+            var ownedPasswordIds = user.Passwords.Select(p => p.Id).ToHashSet();
+
+            foreach (var updatedPassword in request.UpdatedPasswords)
+            {
+                // Eğer istekteki ID, kullanıcının sahip olduğu ID'ler arasında yoksa hata fırlat
+                if (!ownedPasswordIds.Contains(updatedPassword.Id))
+                {
+                    throw new BusinessException(PasswordMessages.UserDoesNotMatch);
+                }
+            }
 
             HashingHelper.CreateMasterPasswordHash(
                 request.NewPassword,
@@ -74,43 +90,9 @@ public class UpdateUserPasswordCommand : IRequest<UpdateUserPasswordResponse>, I
             user!.MasterPasswordHash = passwordHash;
             user.MasterPasswordSalt = passwordSalt;
 
-            var newPasswordEncryptionKey = HashingHelper.DeriveEncryptionKey(
-            request.NewPassword, passwordSalt
-            );
-
-            int passwordsCount = await _passwordService.GetPasswordCountByUserAsync(request.UserId!.Value);
-
-            List<Domain.Entities.Password> updatedPasswords = new();
-
-            string cacheKey = PasswordMessages.GetEncryptionCacheKey(request.UserId!.Value);
-            var existEncryptionKey = _cacheManager.Get<byte[]>(cacheKey);
-
-            for (int i = 0; i < (1 + passwordsCount / 2000); i++)
-            {
-                IPaginate<Domain.Entities.Password> passwords = await _passwordService.GetListAsync(x => x.UserId == request.UserId, size: 2000, index: i);
-
-                if (passwords is null || passwords.Items is null || passwords.Items.Count == 0)
-                {
-                    break;
-                }
-
-                foreach (var password in passwords.Items)
-                {
-                    string existPassword = await AES256HashingHelper.DecryptBytesAsync(password.EncryptedPassword, existEncryptionKey);
-
-                    Domain.Entities.Password updatePassword = password;
-
-                    updatePassword.EncryptedPassword = await AES256HashingHelper.EncryptBytesAsync(existPassword, newPasswordEncryptionKey);
-
-                    updatedPasswords.Add(updatePassword);
-                }
-                await _passwordService.UpdateRangeAsync(updatedPasswords);
-                updatedPasswords.Clear();
-            }
+            _mapper.Map(request.UpdatedPasswords, user.Passwords);
 
             await _userService.UpdateAsync(user);
-
-            _cacheManager.Add(cacheKey, newPasswordEncryptionKey, 14400);
 
             UpdateUserPasswordResponse response = _mapper.Map<UpdateUserPasswordResponse>(user);
 

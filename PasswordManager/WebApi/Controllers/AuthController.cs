@@ -39,8 +39,18 @@ public class AuthController : BaseController
 	{
 		RegisterCommand registerCommand = new() { UserForRegisterDto = userForRegisterDto, IpAddress = getIpAddress() };
 		RegisteredResponse result = await Mediator.Send(registerCommand);
-		setRefreshTokenToCookie(result.RefreshToken);
-		return Created(uri: "", result.AccessToken);
+
+		RefreshToken refreshToken = new()
+		{
+			CreatedByIp = getIpAddress(),
+			ExpirationDate = result.RefreshToken.ExpirationDate,
+			Token = result.RefreshToken.Token,
+			UserId = result.RefreshToken.UserId,
+			Id = result.RefreshToken.Id
+		};
+
+        setRefreshTokenToCookie(refreshToken);
+		return Created(uri: "", result);
 	}
 
 	[HttpPut("RevokeToken")]

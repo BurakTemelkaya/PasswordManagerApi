@@ -38,7 +38,7 @@ public class UserBusinessRules : BaseBusinessRules
 			await throwBusinessException(UsersMessages.UserDontExists);
 	}
 
-	public async Task UserPasswordShouldBeMatched(User user, string password)
+	public async Task UserPasswordShouldBeMatched(User user, byte[] password)
 	{
 		if (!HashingHelper.VerifyMasterPasswordHash(password, user.MasterPasswordHash, user.MasterPasswordSalt))
 			await throwBusinessException(UsersMessages.PasswordDontMatch);

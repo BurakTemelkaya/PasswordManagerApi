@@ -7,6 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Features\Auth\Resources\Locales\auth.en.yaml" />
+    <None Remove="Features\Auth\Resources\Locales\auth.tr.yaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Features\Auth\Resources\Locales\auth.en.yaml" />
+    <EmbeddedResource Include="Features\Auth\Resources\Locales\auth.tr.yaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="FluentValidation" Version="11.11.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.11.0" />

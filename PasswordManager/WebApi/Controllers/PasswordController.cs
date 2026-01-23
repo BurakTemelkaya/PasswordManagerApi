@@ -3,6 +3,7 @@ using Application.Features.Passwords.Commands.Delete;
 using Application.Features.Passwords.Commands.Import;
 using Application.Features.Passwords.Commands.Update;
 using Application.Features.Passwords.Dtos;
+using Application.Features.Passwords.Queries.GetAllPassword;
 using Application.Features.Passwords.Queries.GetPasswordList;
 using Core.Application.Requests;
 using Core.Application.Responses;
@@ -44,7 +45,15 @@ public class PasswordController : BaseController
 		return Ok(result);
 	}
 
-	[HttpGet("{id}")]
+    [HttpGet("GetAll")]
+    public async Task<IActionResult> GetAll()
+    {
+        GetAllPasswordQuery getPasswordListQuery = new() { UserId = getUserIdFromRequest() };
+        List<GetListPasswordDto> result = await Mediator.Send(getPasswordListQuery);
+        return Ok(result);
+    }
+
+    [HttpGet("{id}")]
 	public async Task<IActionResult> GetById([FromRoute] Guid id)
 	{
 		GetPasswordByIdQuery query = new() { Id = id, UserId = getUserIdFromRequest() };

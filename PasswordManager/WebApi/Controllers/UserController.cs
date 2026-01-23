@@ -1,19 +1,26 @@
 ﻿using Application.Features.Users.Commands.UpdatePassword;
-using Microsoft.AspNetCore.Http;
+using Application.Features.Users.Queries.GetKdfParams;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApi.Controllers
+namespace WebApi.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class UserController : BaseController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UserController : BaseController
+    [HttpPut("UpdatePassword")]
+    public async Task<IActionResult> UpdatePassword([FromBody] UpdateUserPasswordCommand updateUserCommand)
     {
-        [HttpPut("UpdatePassword")]
-        public async Task<IActionResult> UpdatePassword([FromBody] UpdateUserPasswordCommand updateUserCommand)
-        {
-            updateUserCommand.UserId = getUserIdFromRequest();
-            UpdateUserPasswordResponse result = await Mediator.Send(updateUserCommand);
-            return Ok(result);
-        }
+        updateUserCommand.UserId = getUserIdFromRequest();
+        updateUserCommand.UpdatedPasswords.Select(up => up.UserId = updateUserCommand.UserId.Value);
+        UpdateUserPasswordResponse result = await Mediator.Send(updateUserCommand);
+        return Ok(result);
+    }
+
+    [HttpGet("GetUserKdfParams")]
+    public async Task<IActionResult> GetUserKdfParams([FromQuery] GetKdfParamsQuery query)
+    {
+        var result = await Mediator.Send(query);
+        return Ok(result);
     }
 }

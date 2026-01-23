@@ -50,7 +50,7 @@ public class AuthBusinessRules : BaseBusinessRules
             await throwBusinessException(AuthMessages.UserMailAlreadyExists);
     }
 
-    public async Task UserPasswordShouldBeMatch(User user, string password)
+    public async Task UserPasswordShouldBeMatch(User user, byte[] password)
     {
         if (!HashingHelper.VerifyMasterPasswordHash(password, user!.MasterPasswordHash, user.MasterPasswordSalt))
             await throwBusinessException(AuthMessages.PasswordDontMatch);

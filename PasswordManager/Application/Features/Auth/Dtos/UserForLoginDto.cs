@@ -6,17 +6,17 @@ public class UserForLoginDto : IDto
 {
     public string UserName { get; set; }
 
-    public string Password { get; set; }
+    public byte[] Password { get; set; }
 
     public string? AuthenticatorCode { get; set; }
 
     public UserForLoginDto()
     {
         UserName = string.Empty;
-        Password = string.Empty;
+        Password = [];
     }
 
-    public UserForLoginDto(string userName, string password)
+    public UserForLoginDto(string userName, byte[] password)
     {
         UserName = userName;
         Password = password;

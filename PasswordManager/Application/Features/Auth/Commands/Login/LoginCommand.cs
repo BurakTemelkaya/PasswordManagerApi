@@ -33,23 +33,17 @@ public class LoginCommand : IRequest<LoggedResponse>
 		//private readonly IAuthenticatorService _authenticatorService;
 		private readonly IAuthService _authService;
 		private readonly IUserService _userService;
-		private readonly ICacheManager _cacheManager;
-		private readonly IConfiguration _configuration;
 
 		public LoginCommandHandler(
 			IUserService userService,
 			IAuthService authService,
-			AuthBusinessRules authBusinessRules,
-			ICacheManager cacheManager,
-			IConfiguration configuration
+			AuthBusinessRules authBusinessRules
 			//IAuthenticatorService authenticatorService
 		)
 		{
 			_userService = userService;
 			_authService = authService;
 			_authBusinessRules = authBusinessRules;
-			_cacheManager = cacheManager;
-			_configuration = configuration;
 			//_authenticatorService = authenticatorService;
 		}
 

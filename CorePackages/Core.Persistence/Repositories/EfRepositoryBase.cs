@@ -299,6 +299,25 @@ public class EfRepositoryBase<TEntity, TEntityId, TContext>
         return queryable.ToPaginate(index, size);
     }
 
+    public async Task<ICollection<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? predicate = null, Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null, bool withDeleted = false, bool enableTracking = true, CancellationToken cancellationToken = default)
+    {
+        var queryable = Query();
+
+        if (!enableTracking)
+            queryable = queryable.AsNoTracking();
+
+        if (include != null)
+            queryable = include(queryable);
+
+        if (withDeleted)
+            queryable = queryable.IgnoreQueryFilters();
+
+        if (predicate != null)
+            queryable = queryable.Where(predicate);
+
+        return await queryable.ToListAsync(cancellationToken);
+    }
+
     public bool Any(
         Expression<Func<TEntity, bool>>? predicate = null,
         Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>>? include = null,

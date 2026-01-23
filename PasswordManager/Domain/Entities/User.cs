@@ -5,9 +5,11 @@ public class User : Core.Security.Entities.User<Guid>
     public string UserName { get; set; }
     public byte[] MasterPasswordHash { get; set; }
     public byte[] MasterPasswordSalt { get; set; }
-    public virtual ICollection<Password> Passwords { get; set; } = default!;
-    public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = default!;
-	public virtual ICollection<UserOperationClaim> UserOperationClaims { get; set; } = default!;
+    public byte[] KdfSalt { get; set; }
+    public int KdfIterations { get; set; }
+    public virtual ICollection<Password> Passwords { get; set; }
+    public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+	public virtual ICollection<UserOperationClaim> UserOperationClaims { get; set; }
 
 	public User()
     {
@@ -15,14 +17,21 @@ public class User : Core.Security.Entities.User<Guid>
         Email = string.Empty;
         MasterPasswordHash = [];
         MasterPasswordSalt = [];
+        KdfSalt = [];
+        Passwords = new HashSet<Password>();
+        RefreshTokens = new HashSet<RefreshToken>();
+        UserOperationClaims = new HashSet<UserOperationClaim>();
     }
 
-    public User(string userName, string email, byte[] masterPasswordHash, byte[] masterPasswordSalt, ICollection<Password> passwords)
+    public User(string userName, byte[] masterPasswordHash, byte[] masterPasswordSalt, byte[] kdfSalt, int kdfIterations, ICollection<Password> passwords, ICollection<RefreshToken> refreshTokens, ICollection<UserOperationClaim> userOperationClaims)
     {
         UserName = userName;
-        Email = email;
         MasterPasswordHash = masterPasswordHash;
         MasterPasswordSalt = masterPasswordSalt;
+        KdfSalt = kdfSalt;
+        KdfIterations = kdfIterations;
         Passwords = passwords;
+        RefreshTokens = refreshTokens;
+        UserOperationClaims = userOperationClaims;
     }
 }

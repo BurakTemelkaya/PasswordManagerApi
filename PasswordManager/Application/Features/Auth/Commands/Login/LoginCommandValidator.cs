@@ -7,6 +7,6 @@ public class LoginCommandValidator : AbstractValidator<LoginCommand>
 	public LoginCommandValidator()
 	{
 		RuleFor(c => c.UserForLoginDto.UserName).NotEmpty().MinimumLength(3);
-		RuleFor(c => c.UserForLoginDto.Password).NotEmpty().MinimumLength(4);
+		RuleFor(c => c.UserForLoginDto.Password).NotEmpty();
 	}
 }

@@ -2,15 +2,13 @@
 using Application.Features.Auth.Rules;
 using Application.Services.AuthService;
 using Application.Services.OperationClaims;
-using Application.Services.UserOperationClaims;
 using Application.Services.Users;
+using AutoMapper;
 using Core.Security.Constants;
 using Core.Security.Hashing;
 using Core.Security.JWT;
 using Domain.Entities;
-using Infrastructure.Caching;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 
 namespace Application.Features.Auth.Commands.Register;
 
@@ -36,27 +34,23 @@ public class RegisterCommand : IRequest<RegisteredResponse>
 		private readonly IUserRepository _userRepository;
 		private readonly IAuthService _authService;
 		private readonly AuthBusinessRules _authBusinessRules;
-		private readonly ICacheManager _cacheManager;
-		private readonly IConfiguration _configuration;
 		private readonly IOperationClaimService _operationClaimService;
+		private readonly IMapper _mapper;
 
-		public RegisterCommandHandler(
+        public RegisterCommandHandler(
 			IUserRepository userRepository,
 			IAuthService authService,
 			AuthBusinessRules authBusinessRules,
-			ICacheManager cacheManager,
-			IConfiguration configuration,
-			IOperationClaimService operationCliamService
-
+			IOperationClaimService operationCliamService,
+			IMapper mapper
 		)
 		{
 			_userRepository = userRepository;
 			_authService = authService;
 			_authBusinessRules = authBusinessRules;
-			_cacheManager = cacheManager;
-			_configuration = configuration;
 			_operationClaimService = operationCliamService;
-		}
+			_mapper = mapper;
+        }
 
 		public async Task<RegisteredResponse> Handle(RegisterCommand request, CancellationToken cancellationToken)
 		{
@@ -85,8 +79,10 @@ public class RegisterCommand : IRequest<RegisteredResponse>
 					UserName = request.UserForRegisterDto.UserName,
 					MasterPasswordHash = passwordHash,
 					MasterPasswordSalt = passwordSalt,
-					UserOperationClaims = addedClaims
-				};
+					UserOperationClaims = addedClaims,
+					KdfSalt = request.UserForRegisterDto.KdfSalt,
+					KdfIterations = request.UserForRegisterDto.KdfIterations
+                };
 
 			User createdUser = await _userRepository.AddAsync(newUser, cancellationToken);
 
@@ -98,7 +94,13 @@ public class RegisterCommand : IRequest<RegisteredResponse>
 			);
 			RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
 
-			RegisteredResponse registeredResponse = new() { AccessToken = createdAccessToken, RefreshToken = addedRefreshToken };
+			RegisteredResponse registeredResponse = new()
+			{
+				AccessToken = _mapper.Map<AccessTokenByRegisterDto>(createdAccessToken),
+				RefreshToken = _mapper.Map<RefreshTokenForRegisterDto>(addedRefreshToken),
+				KdfIterations = createdUser.KdfIterations,
+				KdfSalt = createdUser.KdfSalt
+			};
 
 			return registeredResponse;
 		}
