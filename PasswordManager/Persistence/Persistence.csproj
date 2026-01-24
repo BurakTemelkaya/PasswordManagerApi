@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core.Persistence.DependencyInjection\Core.Persistence.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\CorePackages\Core.Persistence.DependencyInjection\Core.Persistence.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\CorePackages\Core.Persistence\Core.Persistence.csproj" />
     <ProjectReference Include="..\Application\Application.csproj" />

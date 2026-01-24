@@ -25,8 +25,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Core.Localization.Abstraction\Core.Localization.Abstraction.csproj" />
-    <ProjectReference Include="..\..\Core.Localization.Resource.Yaml.DependencyInjection\Core.Localization.Resource.Yaml.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\CorePackages\Core.Application\Core.Application.csproj" />
     <ProjectReference Include="..\..\CorePackages\Core.Localization.Abstraction\Core.Localization.Abstraction.csproj" />
     <ProjectReference Include="..\..\CorePackages\Core.Localization.Resource.Yaml.DependencyInjection\Core.Localization.Resource.Yaml.DependencyInjection.csproj" />
