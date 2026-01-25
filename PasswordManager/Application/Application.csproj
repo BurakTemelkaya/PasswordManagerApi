@@ -1,20 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Features\Auth\Resources\Locales\auth.en.yaml" />
-    <None Remove="Features\Auth\Resources\Locales\auth.tr.yaml" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Features\Auth\Resources\Locales\auth.en.yaml" />
-    <EmbeddedResource Include="Features\Auth\Resources\Locales\auth.tr.yaml" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="14.0.0" />
@@ -26,6 +16,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CorePackages\Core.Application\Core.Application.csproj" />
+    <ProjectReference Include="..\..\CorePackages\Core.CrossCuttingConcerns.Logging.Serilog.File\Core.CrossCuttingConcerns.Logging.Serilog.File.csproj" />
+    <ProjectReference Include="..\..\CorePackages\Core.CrossCuttingConcerns.Logging.Serilog\Core.CrossCuttingConcerns.Logging.Serilog.csproj" />
     <ProjectReference Include="..\..\CorePackages\Core.Localization.Abstraction\Core.Localization.Abstraction.csproj" />
     <ProjectReference Include="..\..\CorePackages\Core.Localization.Resource.Yaml.DependencyInjection\Core.Localization.Resource.Yaml.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\CorePackages\Core.Persistence\Core.Persistence.csproj" />

@@ -1,4 +1,5 @@
 using Application;
+using Core.CrossCuttingConcerns.Logging.Configurations;
 using Core.Security.Encryption;
 using Core.Security.JWT;
 using Core.Security.WebApi.Swagger.Extensions;
@@ -9,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using Persistence;
 using System.Text.Json.Serialization;
 using WebApi;
+using Core.CrossCuttingConcerns.Exception.WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,7 +27,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddApplicationServices(
-		tokenOptions: builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>()
+        fileLogConfiguration: builder
+        .Configuration.GetSection("SeriLogConfigurations:FileLogConfiguration")
+        .Get<FileLogConfiguration>()!,
+        tokenOptions: builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>()
 			?? throw new InvalidOperationException("TokenOptions section cannot found in configuration.")
 		);
 builder.Services.AddHttpContextAccessor();
@@ -89,15 +94,17 @@ if (builder.Environment.IsDevelopment())
     });
 }
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
 	app.UseSwagger();
-	app.UseSwaggerUI();
-
+	app.UseSwaggerUI(); 
 }
+else
+	app.ConfigureCustomExceptionMiddleware();
 
 app.UseHttpsRedirection();
 

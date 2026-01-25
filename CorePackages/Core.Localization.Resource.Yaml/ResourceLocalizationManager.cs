@@ -1,12 +1,11 @@
-﻿using System.Data;
-using Core.Localization.Abstraction;
+﻿using Core.Localization.Abstraction;
 using YamlDotNet.RepresentationModel;
 
 namespace Core.Localization.Resource.Yaml;
 
 public class ResourceLocalizationManager : ILocalizationService
 {
-    private const string _defaultLocale = "en";
+    private const string _defaultLocale = "tr";
     private const string _defaultKeySection = "index";
     public ICollection<string>? AcceptLocales { get; set; }
 
@@ -27,7 +26,9 @@ public class ResourceLocalizationManager : ILocalizationService
 
     public Task<string> GetLocalizedAsync(string key, string? keySection = null)
     {
-        return GetLocalizedAsync(key, AcceptLocales ?? throw new NoNullAllowedException(nameof(AcceptLocales)), keySection);
+        // AcceptLocales null ise, default locale kullan - exception fırlatma!
+        var locales = AcceptLocales ?? new List<string> { _defaultLocale };
+        return GetLocalizedAsync(key, locales, keySection);
     }
 
     public Task<string> GetLocalizedAsync(string key, ICollection<string> acceptLocales, string? keySection = null)

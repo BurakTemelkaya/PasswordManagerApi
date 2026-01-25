@@ -1,4 +1,7 @@
 ﻿using Application.Services.AuthService;
+using Application.Services.OperationClaims;
+using Application.Services.Passwords;
+using Application.Services.UserOperationClaims;
 using Application.Services.Users;
 using Core.Application.Pipelines.Authorization;
 using Core.Application.Pipelines.Caching;
@@ -6,21 +9,22 @@ using Core.Application.Pipelines.Logging;
 using Core.Application.Pipelines.Transaction;
 using Core.Application.Pipelines.Validation;
 using Core.Application.Rules;
+using Core.CrossCuttingConcerns.Logging.Abstraction;
+using Core.CrossCuttingConcerns.Logging.Configurations;
+using Core.CrossCuttingConcerns.Logging.Serilog;
+using Core.CrossCuttingConcerns.Logging.Serilog.File;
+using Core.Localization.Resource.Yaml.DependencyInjection;
+using Core.Security.DependencyInjection;
 using Core.Security.JWT;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Core.Localization.Resource.Yaml.DependencyInjection;
-using Core.Security.DependencyInjection;
-using Application.Services.UserOperationClaims;
-using Application.Services.OperationClaims;
-using Application.Services.Passwords;
 
 namespace Application;
 
 public static class ApplicationServiceRegistration
 {
-	public static IServiceCollection AddApplicationServices(this IServiceCollection services, TokenOptions tokenOptions)
+	public static IServiceCollection AddApplicationServices(this IServiceCollection services, FileLogConfiguration fileLogConfiguration, TokenOptions tokenOptions)
 	{
 		services.AddAutoMapper(Assembly.GetExecutingAssembly());
 		services.AddMediatR(configuration =>
@@ -45,8 +49,9 @@ public static class ApplicationServiceRegistration
 		services.AddScoped<IUserOperationClaimService, UserOperationClaimManager>();
 		services.AddScoped<IOperationClaimService, OperationClaimManager>();
 		services.AddScoped<IPasswordService, PasswordManager>();
+        services.AddSingleton<ILogger, SerilogFileLogger>(_ => new SerilogFileLogger(fileLogConfiguration));
 
-		services.AddYamlResourceLocalization();
+        services.AddYamlResourceLocalization();
 
 		return services;
 	}
