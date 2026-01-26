@@ -32,7 +32,9 @@ jobs:
 
     # 3. ADIM: Uygulamayý durdurmak için app_offline.htm oluþtur
     - name: Create app_offline.htm
-      run: echo "<html><head><meta charset='utf-8'></head><body><div style='text-align:center;margin-top:100px;'><h1>Sistem Guncelleniyor...</h1><p>Lutfen bekleyiniz.</p></div></body></html>" > ./app_offline_temp/app_offline.htm
+      run: |
+        mkdir -p ./app_offline_temp
+        echo "<html><head><meta charset='utf-8'></head><body><div style='text-align:center;margin-top:100px;'><h1>Sistem Guncelleniyor...</h1><p>Lutfen bekleyiniz.</p></div></body></html>" > ./app_offline_temp/app_offline.htm
 
     # 4. ADIM: Önce app_offline.htm'i gönder (Uygulamayý durdur)
     - name: Upload app_offline.htm to stop the application
