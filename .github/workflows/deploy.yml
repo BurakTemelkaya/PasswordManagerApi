@@ -30,17 +30,40 @@ jobs:
     - name: Dotnet Publish
       run: dotnet publish PasswordManager/WebApi/WebApi.csproj -c Release -o ./publish
 
-    # 3. ADIM: Uygulamayý durdurmak için app_offline.htm oluþtur (DLL kilidini açar)
+    # 3. ADIM: Uygulamayý durdurmak için app_offline.htm oluþtur
     - name: Create app_offline.htm
-      run: echo "<html><head><meta charset='utf-8'></head><body><div style='text-align:center;margin-top:100px;'><h1>Sistem Guncelleniyor...</h1><p>Lutfen bekleyiniz.</p></div></body></html>" > ./publish/app_offline.htm
+      run: echo "<html><head><meta charset='utf-8'></head><body><div style='text-align:center;margin-top:100px;'><h1>Sistem Guncelleniyor...</h1><p>Lutfen bekleyiniz.</p></div></body></html>" > ./app_offline_temp/app_offline.htm
 
-    # 4. ADIM: FTP ile tüm dosyalarý Plesk'e gönderme
-    - name: FTP Deploy
+    # 4. ADIM: Önce app_offline.htm'i gönder (Uygulamayý durdur)
+    - name: Upload app_offline.htm to stop the application
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ${{ secrets.FTP_SERVER }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        local-dir: ./app_offline_temp/
+        server-dir: passwordapi.buraktemelkaya.com/
+
+    # 5. ADIM: Uygulamanýn durmasý için bekle
+    - name: Wait for application to stop
+      run: sleep 15
+
+    # 6. ADIM: Tüm dosyalarý FTP ile gönder
+    - name: FTP Deploy All Files
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/
-        server-dir: passwordapi.buraktemelkaya.com/ 
-        delete-destination-redundant: false # Mevcut loglarý veya özel dosyalarý silmemesi için false
+        server-dir: passwordapi.buraktemelkaya.com/
+
+    # 7. ADIM: app_offline.htm'i sil (Uygulamayý yeniden baþlat)
+    - name: Delete app_offline.htm via FTP
+      run: |
+        sudo apt-get update && sudo apt-get install -y lftp
+        lftp -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }} <<EOF
+        cd passwordapi.buraktemelkaya.com
+        rm -f app_offline.htm
+        bye
+        EOF
