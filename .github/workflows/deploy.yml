@@ -56,8 +56,11 @@ jobs:
         lftp -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }} <<EOF
         set ssl:verify-certificate no
         set ftp:ssl-allow yes
+        set ftp:use-site-chmod no
+        set ftp:use-site-utime no
         set mirror:parallel-transfer-count 10
-        mirror --reverse --delete --verbose --only-newer --parallel=10 ./publish/ passwordapi.buraktemelkaya.com/
+        set mirror:use-pget-n 5
+        mirror --reverse --delete --verbose --only-newer --no-perms --parallel=10 ./publish/ passwordapi.buraktemelkaya.com/
         bye
         EOF
 
