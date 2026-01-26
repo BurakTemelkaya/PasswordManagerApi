@@ -1,6 +1,6 @@
 ﻿namespace Application.Features.Auth.Dtos;
 
-public class RefreshTokenForRegisterDto
+public class RefreshTokenForAuthDto
 {
     public Guid Id { get; set; }
     public Guid UserId { get; set; }
@@ -8,13 +8,13 @@ public class RefreshTokenForRegisterDto
     public DateTime ExpirationDate { get; set; }
     public string CreatedByIp { get; set; }
 
-    public RefreshTokenForRegisterDto()
+    public RefreshTokenForAuthDto()
     {
         Token = string.Empty;
         CreatedByIp = string.Empty;
     }
 
-    public RefreshTokenForRegisterDto(Guid userId, string token, DateTime expirationDate, string createdByIp)
+    public RefreshTokenForAuthDto(Guid userId, string token, DateTime expirationDate, string createdByIp)
     {
         UserId = userId;
         Token = token;

@@ -1,11 +1,11 @@
 ﻿namespace Application.Features.Auth.Dtos;
 
-public class AccessTokenByRegisterDto
+public class AccessTokenByAuthDto
 {
     public string Token { get; set; }
     public DateTime ExpirationDate { get; set; }
 
-    public AccessTokenByRegisterDto()
+    public AccessTokenByAuthDto()
     {
         Token = string.Empty;
     }

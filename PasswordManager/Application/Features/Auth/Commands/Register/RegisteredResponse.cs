@@ -7,8 +7,8 @@ namespace Application.Features.Auth.Commands.Register;
 
 public class RegisteredResponse : IResponse
 {
-    public AccessTokenByRegisterDto AccessToken { get; set; }
-    public RefreshTokenForRegisterDto RefreshToken { get; set; }
+    public AccessTokenByAuthDto AccessToken { get; set; }
+    public RefreshTokenForAuthDto RefreshToken { get; set; }
     public byte[] KdfSalt { get; set; }
     public int KdfIterations { get; set; }
 
@@ -20,7 +20,7 @@ public class RegisteredResponse : IResponse
         KdfIterations = 0;
     }
 
-    public RegisteredResponse(AccessTokenByRegisterDto accessToken, RefreshTokenForRegisterDto refreshToken, byte[] kdfSalt, int kdfIterations)
+    public RegisteredResponse(AccessTokenByAuthDto accessToken, RefreshTokenForAuthDto refreshToken, byte[] kdfSalt, int kdfIterations)
     {
         AccessToken = accessToken;
         RefreshToken = refreshToken;

@@ -88,16 +88,16 @@ public class RegisterCommand : IRequest<RegisteredResponse>
 
 			AccessToken createdAccessToken = await _authService.CreateAccessToken(createdUser);
 
-			RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(
+			Domain.Entities.RefreshToken createdRefreshToken = await _authService.CreateRefreshToken(
 				createdUser,
 				request.IpAddress
 			);
-			RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
+            Domain.Entities.RefreshToken addedRefreshToken = await _authService.AddRefreshToken(createdRefreshToken);
 
 			RegisteredResponse registeredResponse = new()
 			{
-				AccessToken = _mapper.Map<AccessTokenByRegisterDto>(createdAccessToken),
-				RefreshToken = _mapper.Map<RefreshTokenForRegisterDto>(addedRefreshToken),
+				AccessToken = _mapper.Map<AccessTokenByAuthDto>(createdAccessToken),
+				RefreshToken = _mapper.Map<RefreshTokenForAuthDto>(addedRefreshToken),
 				KdfIterations = createdUser.KdfIterations,
 				KdfSalt = createdUser.KdfSalt
 			};

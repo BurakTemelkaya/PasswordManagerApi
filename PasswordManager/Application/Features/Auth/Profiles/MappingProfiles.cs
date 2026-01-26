@@ -9,8 +9,8 @@ public class MappingProfiles : Profile
     {
         CreateMap<Core.Security.Entities.RefreshToken<Guid, Guid>, Domain.Entities.RefreshToken>().ReverseMap();
 
-        CreateMap<Domain.Entities.RefreshToken, RefreshTokenForRegisterDto>().ReverseMap();
-        CreateMap<Core.Security.JWT.AccessToken, AccessTokenByRegisterDto>().ReverseMap();
+        CreateMap<Domain.Entities.RefreshToken, RefreshTokenForAuthDto>().ReverseMap();
+        CreateMap<Core.Security.JWT.AccessToken, AccessTokenByAuthDto>().ReverseMap();
         CreateMap<Core.Security.Entities.RefreshToken<Guid, Guid>, Domain.Entities.RefreshToken>().ReverseMap();
 
         //CreateMap<RefreshToken, RevokedTokenResponse>().ReverseMap();
