@@ -1,5 +1,6 @@
 ﻿using Core.Security.Extensions;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -22,6 +23,7 @@ public class BaseController : ControllerBase
 		return ipAddress;
 	}
 
+	[Authorize]
 	protected Guid getUserIdFromRequest() //todo authentication behavior?
 	{
 		var userId = Guid.Parse(HttpContext.User.GetIdClaim()!);

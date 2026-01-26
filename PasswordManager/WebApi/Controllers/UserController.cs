@@ -1,5 +1,6 @@
 ﻿using Application.Features.Users.Commands.UpdatePassword;
 using Application.Features.Users.Queries.GetKdfParams;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers;
@@ -8,6 +9,7 @@ namespace WebApi.Controllers;
 [ApiController]
 public class UserController : BaseController
 {
+    [Authorize]
     [HttpPut("UpdatePassword")]
     public async Task<IActionResult> UpdatePassword([FromBody] UpdateUserPasswordCommand updateUserCommand)
     {
