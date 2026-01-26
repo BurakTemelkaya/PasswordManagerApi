@@ -2,7 +2,7 @@ name: Deploy PasswordManagerApi to Plesk
 
 on:
   push:
-    branches: [ "master" ] # Branch adýnýz master olduðu için burayý sabitledik
+    branches: [ "master" ]
 
 jobs:
   build-and-deploy:
@@ -30,13 +30,20 @@ jobs:
     - name: Dotnet Publish
       run: dotnet publish PasswordManager/WebApi/WebApi.csproj -c Release -o ./publish
 
-    # 3. ADIM: Uygulamayý durdurmak için app_offline.htm oluþtur
+    # 3. ADIM: FTP sync state'i cache'den yükle (deðiþen dosyalarý tespit için)
+    - name: Load FTP sync state from cache
+      uses: actions/cache@v3
+      with:
+        path: .ftp-deploy-sync-state.json
+        key: ftp-deploy-state-${{ github.repository }}
+
+    # 4. ADIM: Uygulamayý durdurmak için app_offline.htm oluþtur
     - name: Create app_offline.htm
       run: |
         mkdir -p ./app_offline_temp
         echo "<html><head><meta charset='utf-8'></head><body><div style='text-align:center;margin-top:100px;'><h1>Sistem Guncelleniyor...</h1><p>Lutfen bekleyiniz.</p></div></body></html>" > ./app_offline_temp/app_offline.htm
 
-    # 4. ADIM: Önce app_offline.htm'i gönder (Uygulamayý durdur)
+    # 5. ADIM: Önce app_offline.htm'i gönder (Uygulamayý durdur)
     - name: Upload app_offline.htm to stop the application
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
@@ -46,12 +53,12 @@ jobs:
         local-dir: ./app_offline_temp/
         server-dir: passwordapi.buraktemelkaya.com/
 
-    # 5. ADIM: Uygulamanýn durmasý için bekle
+    # 6. ADIM: Uygulamanýn durmasý için bekle
     - name: Wait for application to stop
-      run: sleep 15
+      run: sleep 10
 
-    # 6. ADIM: Tüm dosyalarý FTP ile gönder
-    - name: FTP Deploy All Files
+    # 7. ADIM: Sadece deðiþen dosyalarý FTP ile gönder (INCREMENTAL DEPLOY)
+    - name: FTP Deploy Changed Files Only
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ${{ secrets.FTP_SERVER }}
@@ -59,8 +66,11 @@ jobs:
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/
         server-dir: passwordapi.buraktemelkaya.com/
+        state-name: .ftp-deploy-sync-state.json
+        dry-run: false
+        dangerous-clean-slate: false
 
-    # 7. ADIM: app_offline.htm'i sil (Uygulamayý yeniden baþlat)
+    # 8. ADIM: app_offline.htm'i sil (Uygulamayý yeniden baþlat)
     - name: Delete app_offline.htm via FTP
       run: |
         sudo apt-get update && sudo apt-get install -y lftp
