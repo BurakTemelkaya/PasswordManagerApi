@@ -30,51 +30,42 @@ jobs:
     - name: Dotnet Publish
       run: dotnet publish PasswordManager/WebApi/WebApi.csproj -c Release -o ./publish
 
-    # 3. ADIM: FTP sync state'i cache'den yükle (deðiþen dosyalarý tespit için)
-    - name: Load FTP sync state from cache
-      uses: actions/cache@v3
-      with:
-        path: .ftp-deploy-sync-state.json
-        key: ftp-deploy-state-${{ github.repository }}
+    # 3. ADIM: LFTP kur
+    - name: Install LFTP
+      run: sudo apt-get update && sudo apt-get install -y lftp
 
-    # 4. ADIM: Uygulamayý durdurmak için app_offline.htm oluþtur
-    - name: Create app_offline.htm
+    # 4. ADIM: app_offline.htm oluþtur ve gönder
+    - name: Create and upload app_offline.htm to stop application
       run: |
         mkdir -p ./app_offline_temp
         echo "<html><head><meta charset='utf-8'></head><body><div style='text-align:center;margin-top:100px;'><h1>Sistem Guncelleniyor...</h1><p>Lutfen bekleyiniz.</p></div></body></html>" > ./app_offline_temp/app_offline.htm
+        lftp -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }} <<EOF
+        set ssl:verify-certificate no
+        cd passwordapi.buraktemelkaya.com
+        put ./app_offline_temp/app_offline.htm
+        bye
+        EOF
 
-    # 5. ADIM: Önce app_offline.htm'i gönder (Uygulamayý durdur)
-    - name: Upload app_offline.htm to stop the application
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./app_offline_temp/
-        server-dir: passwordapi.buraktemelkaya.com/
-
-    # 6. ADIM: Uygulamanýn durmasý için bekle
+    # 5. ADIM: Uygulamanýn durmasý için bekle
     - name: Wait for application to stop
       run: sleep 10
 
-    # 7. ADIM: Sadece deðiþen dosyalarý FTP ile gönder (INCREMENTAL DEPLOY)
-    - name: FTP Deploy Changed Files Only
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./publish/
-        server-dir: passwordapi.buraktemelkaya.com/
-        state-name: .ftp-deploy-sync-state.json
-        dry-run: false
-        dangerous-clean-slate: false
-
-    # 8. ADIM: app_offline.htm'i sil (Uygulamayý yeniden baþlat)
-    - name: Delete app_offline.htm via FTP
+    # 6. ADIM: Sadece deðiþen dosyalarý LFTP Mirror ile gönder (Tarih bazlý)
+    - name: Deploy changed files via LFTP Mirror
       run: |
-        sudo apt-get update && sudo apt-get install -y lftp
         lftp -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }} <<EOF
+        set ssl:verify-certificate no
+        set ftp:ssl-allow yes
+        set mirror:parallel-transfer-count 10
+        mirror --reverse --delete --verbose --only-newer --parallel=10 ./publish/ passwordapi.buraktemelkaya.com/
+        bye
+        EOF
+
+    # 7. ADIM: app_offline.htm'i sil (Uygulamayý yeniden baþlat)
+    - name: Delete app_offline.htm to restart application
+      run: |
+        lftp -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }} <<EOF
+        set ssl:verify-certificate no
         cd passwordapi.buraktemelkaya.com
         rm -f app_offline.htm
         bye
