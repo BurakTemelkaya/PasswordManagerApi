@@ -108,11 +108,6 @@ else
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
 app.UseCors(
     opt =>
         opt.WithOrigins(app.Configuration.GetSection("WebAPIConfiguration").Get<WebApiConfiguration>()!.AllowedOrigins)
@@ -120,5 +115,10 @@ app.UseCors(
             .AllowAnyMethod()
             .AllowCredentials()
 );
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
 
 app.Run();
