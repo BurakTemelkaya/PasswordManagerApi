@@ -1,11 +1,11 @@
-name: Deploy ASP.NET Core API to Plesk (Safe Mode)
+name: Deploy PasswordManagerApi to Plesk
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "master" ] # Branch adýnýz master olduðu için burayý sabitledik
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,60 +14,33 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x' # Kendi versiyonunuza göre (8.0, 7.0 vb.) güncelleyin
+        dotnet-version: '8.0.x'
 
-    # 1. ADIM: appsettings.json içindeki gizli bilgileri GitHub Secrets ile deðiþtirme
-    - name: AppSettings Deðiþkenlerini Enjekte Et
+    # 1. ADIM: appsettings.json verilerini GitHub Secrets ile güvenli þekilde deðiþtirme
+    - name: Update AppSettings
       uses: microsoft/variable-substitution@v1
       with:
-        files: '**/appsettings.json' 
+        files: 'projects/passwordManagerApi/WebAPI/appsettings.json'
       env:
         ConnectionStrings.PasswordManagerDb: ${{ secrets.DB_CONNECTION }}
         TokenOptions.SecurityKey: ${{ secrets.JWT_SECURITY_KEY }}
         SaltSecret: ${{ secrets.SALT_SECRET }}
 
-    # 2. ADIM: Projeyi derle (Publish)
+    # 2. ADIM: Publish (Build) alma
     - name: Dotnet Publish
-      run: dotnet publish -c Release -o ./publish
+      run: dotnet publish projects/passwordManagerApi/WebAPI/WebAPI.csproj -c Release -o ./publish
 
-    # 3. ADIM: Uygulamayý durdurmak için app_offline.htm oluþtur
+    # 3. ADIM: Uygulamayý durdurmak için app_offline.htm oluþtur (DLL kilidini açar)
     - name: Create app_offline.htm
-      run: |
-        echo "<html><head><meta charset='utf-8'></head><body><div style='text-align:center;margin-top:100px;'><h1>Sistem Güncelleniyor</h1><p>Lütfen birkaç dakika sonra tekrar deneyiniz.</p></div></body></html>" > ./publish/app_offline.htm
+      run: echo "<html><head><meta charset='utf-8'></head><body><div style='text-align:center;margin-top:100px;'><h1>Sistem Guncelleniyor...</h1><p>Lutfen bekleyiniz.</p></div></body></html>" > ./publish/app_offline.htm
 
-    # 4. ADIM: Önce SADECE app_offline.htm dosyasýný gönder (Uygulamayý durdurur ve DLL kilitlerini açar)
-    - name: Stop Application
+    # 4. ADIM: FTP ile tüm dosyalarý Plesk'e gönderme
+    - name: FTP Deploy
       uses: SamKirkland/FTP-Deploy-Action@v4.3.5
       with:
         server: ${{ secrets.FTP_SERVER }}
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./publish/
-        server-dir: passwordapi.buraktemelkaya.com/
-        extract-path: 'app_offline.htm' # Sadece bu dosyaya odaklanmasý için
-
-    # 5. ADIM: Tüm dosyalarý (DLL'ler dahil) gönder
-    - name: Sync All Files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./publish/
-        server-dir: passwordapi.buraktemelkaya.com/
-        delete-destination-redundant: false # Mevcut dosyalarý temizlemek isterseniz true yapýn
-
-    # 6. ADIM: app_offline.htm dosyasýný sunucudan sil (Uygulamayý tekrar baþlatýr)
-    # FTP-Deploy-Action ile dosya silmek için 'exclude' mekanizmasýný kullanýyoruz
-    - name: Start Application (Remove app_offline.htm)
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{ secrets.FTP_SERVER }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        local-dir: ./empty_dir/ # Boþ bir klasör gösteriyoruz
-        server-dir: passwordapi.buraktemelkaya.com/
-        delete-destination-redundant: true
-        exclude: |
-          **
-          !app_offline.htm
+        server-dir: passwordapi.buraktemelkaya.com/ 
+        delete-destination-redundant: false # Mevcut loglarý veya özel dosyalarý silmemesi için false
