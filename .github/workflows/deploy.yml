@@ -20,7 +20,7 @@ jobs:
     - name: Update AppSettings
       uses: microsoft/variable-substitution@v1
       with:
-        files: 'projects/passwordManagerApi/WebAPI/appsettings.json'
+        files: 'PasswordManager/WebApi/appsettings.json'
       env:
         ConnectionStrings.PasswordManagerDb: ${{ secrets.DB_CONNECTION }}
         TokenOptions.SecurityKey: ${{ secrets.JWT_SECURITY_KEY }}
@@ -28,7 +28,7 @@ jobs:
 
     # 2. ADIM: Publish (Build) alma
     - name: Dotnet Publish
-      run: dotnet publish projects/passwordManagerApi/WebAPI/WebAPI.csproj -c Release -o ./publish
+      run: dotnet publish PasswordManager/WebApi/WebApi.csproj -c Release -o ./publish
 
     # 3. ADIM: Uygulamayý durdurmak için app_offline.htm oluþtur (DLL kilidini açar)
     - name: Create app_offline.htm
