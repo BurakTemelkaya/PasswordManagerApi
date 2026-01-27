@@ -80,21 +80,6 @@ builder.Services.AddSwaggerGen(opt =>
 
 builder.Services.AddEndpointsApiExplorer();
 
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddCors(options =>
-    {
-        options.AddDefaultPolicy(policy =>
-        {
-            policy.SetIsOriginAllowed(_ => true)  // Tüm originlere izin ver (development için)
-                  .AllowAnyHeader()
-                  .AllowAnyMethod()
-                  .AllowCredentials();
-        });
-    });
-}
-
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
