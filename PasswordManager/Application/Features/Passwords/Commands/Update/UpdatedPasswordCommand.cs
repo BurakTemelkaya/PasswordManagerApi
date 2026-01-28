@@ -1,6 +1,7 @@
 ﻿using Application.Features.Passwords.Constants;
 using Application.Features.Passwords.Dtos;
 using Application.Services.Passwords;
+using Application.Services.Users;
 using AutoMapper;
 using Core.Application.Pipelines.Authorization;
 using Core.CrossCuttingConcerns.Exception.Types;
@@ -29,11 +30,13 @@ public class UpdatedPasswordCommand : IRequest<UpdatePasswordResponse>, ISecured
     {
         private readonly IMapper _mapper;
         private readonly IPasswordService _passwordService;
+        private readonly IUserService _userService;
 
-        public UpdatePasswordCommandHandler(IMapper mapper, IPasswordService passwordService)
+        public UpdatePasswordCommandHandler(IMapper mapper, IPasswordService passwordService,IUserService userService)
         {
             _mapper = mapper;
             _passwordService = passwordService;
+            _userService = userService;
         }
         public async Task<UpdatePasswordResponse> Handle(UpdatedPasswordCommand request, CancellationToken cancellationToken)
         {
@@ -52,6 +55,8 @@ public class UpdatedPasswordCommand : IRequest<UpdatePasswordResponse>, ISecured
             password = _mapper.Map(request.UpdatedPasswordDto, password);
 
             Domain.Entities.Password updatedPassword = await _passwordService.UpdateAsync(password);
+
+            await _userService.UpdateVaultLastUpdatedDateAsync(updatedPassword.UserId);
 
             UpdatePasswordResponse updatedPasswordResponse = _mapper.Map<UpdatePasswordResponse>(updatedPassword);
 

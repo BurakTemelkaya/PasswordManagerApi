@@ -1,3 +1,4 @@
+using Application.Features.Auth.Commands.RevokeToken;
 using Application.Features.Auth.Dtos;
 using AutoMapper;
 
@@ -13,6 +14,6 @@ public class MappingProfiles : Profile
         CreateMap<Core.Security.JWT.AccessToken, AccessTokenByAuthDto>().ReverseMap();
         CreateMap<Core.Security.Entities.RefreshToken<Guid, Guid>, Domain.Entities.RefreshToken>().ReverseMap();
 
-        //CreateMap<RefreshToken, RevokedTokenResponse>().ReverseMap();
+        CreateMap<Domain.Entities.RefreshToken, RevokedTokenResponse>().ReverseMap();
     }
 }

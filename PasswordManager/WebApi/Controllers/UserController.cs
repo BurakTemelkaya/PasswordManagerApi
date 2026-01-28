@@ -1,5 +1,7 @@
 ﻿using Application.Features.Users.Commands.UpdatePassword;
+using Application.Features.Users.Dtos;
 using Application.Features.Users.Queries.GetKdfParams;
+using Application.Features.Users.Queries.GetVaultLastUpdateDate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,7 +24,21 @@ public class UserController : BaseController
     [HttpGet("GetUserKdfParams")]
     public async Task<IActionResult> GetUserKdfParams([FromQuery] GetKdfParamsQuery query)
     {
-        var result = await Mediator.Send(query);
+        GetKdfParamsDto result = await Mediator.Send(query);
+        return Ok(result);
+    }
+
+    [Authorize]
+    [HttpGet("GetVaultLastUpdateDate")]
+    public async Task<IActionResult> GetVaultLastUpdateDate()
+    {
+        GetVaultLastUpdateDateQuery query = new()
+        {
+            UserId = getUserIdFromRequest()
+        };
+
+        DateTime result = await Mediator.Send(query);
+
         return Ok(result);
     }
 }

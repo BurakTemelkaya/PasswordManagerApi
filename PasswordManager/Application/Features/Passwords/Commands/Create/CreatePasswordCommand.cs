@@ -1,5 +1,6 @@
 ﻿using Application.Features.Passwords.Dtos;
 using Application.Services.Passwords;
+using Application.Services.Users;
 using AutoMapper;
 using Core.Application.Pipelines.Authorization;
 using Core.Security.Constants;
@@ -9,39 +10,43 @@ namespace Application.Features.Passwords.Commands.Create;
 
 public class CreatePasswordCommand : IRequest<CreatePasswordResponse>, ISecuredRequest
 {
-	public CreatePasswordDto CreatePasswordDto { get; set; }
+    public CreatePasswordDto CreatePasswordDto { get; set; }
 
-	public string[] Roles => new[] { GeneralOperationClaims.User };
+    public string[] Roles => [GeneralOperationClaims.User];
 
-	public CreatePasswordCommand()
-	{
-		CreatePasswordDto = null!;
-	}
+    public CreatePasswordCommand()
+    {
+        CreatePasswordDto = null!;
+    }
 
-	public CreatePasswordCommand(CreatePasswordDto createPasswordDto)
-	{
-		CreatePasswordDto = createPasswordDto;
-	}
+    public CreatePasswordCommand(CreatePasswordDto createPasswordDto)
+    {
+        CreatePasswordDto = createPasswordDto;
+    }
 
-	public class CreatePasswordCommandHandler : IRequestHandler<CreatePasswordCommand, CreatePasswordResponse>
-	{
-		private readonly IMapper _mapper;
-		private readonly IPasswordService _passwordService;
+    public class CreatePasswordCommandHandler : IRequestHandler<CreatePasswordCommand, CreatePasswordResponse>
+    {
+        private readonly IMapper _mapper;
+        private readonly IPasswordService _passwordService;
+        private readonly IUserService _userService;
 
-		public CreatePasswordCommandHandler(IMapper mapper, IPasswordService passwordService)
-		{
-			_mapper = mapper;
-			_passwordService = passwordService;
-		}
-		public async Task<CreatePasswordResponse> Handle(CreatePasswordCommand request, CancellationToken cancellationToken)
-		{
-			Domain.Entities.Password password = _mapper.Map<Domain.Entities.Password>(request.CreatePasswordDto);
-			
-			Domain.Entities.Password addedPassword = await _passwordService.AddAsync(password);
+        public CreatePasswordCommandHandler(IMapper mapper, IPasswordService passwordService, IUserService userService)
+        {
+            _mapper = mapper;
+            _passwordService = passwordService;
+            _userService = userService;
+        }
+        public async Task<CreatePasswordResponse> Handle(CreatePasswordCommand request, CancellationToken cancellationToken)
+        {
+            Domain.Entities.Password password = _mapper.Map<Domain.Entities.Password>(request.CreatePasswordDto);
 
-			CreatePasswordResponse createPasswordResponse = _mapper.Map<CreatePasswordResponse>(addedPassword);
+            Domain.Entities.Password addedPassword = await _passwordService.AddAsync(password);
 
-			return createPasswordResponse;
-		}
-	}
+            await _userService.UpdateVaultLastUpdatedDateAsync(password.UserId);
+
+            CreatePasswordResponse createPasswordResponse = _mapper.Map<CreatePasswordResponse>(addedPassword);
+
+            return createPasswordResponse;
+        }
+    }
 }

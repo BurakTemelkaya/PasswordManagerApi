@@ -1,5 +1,6 @@
 ﻿using Application.Features.Passwords.Rules;
 using Application.Services.Passwords;
+using Application.Services.Users;
 using AutoMapper;
 using Core.Application.Pipelines.Authorization;
 using Core.Security.Constants;
@@ -19,13 +20,15 @@ public class DeletePasswordCommand : IRequest<DeletePasswordResponse>, ISecuredR
 		private readonly IPasswordService _passwordService;
 		private readonly PasswordBusinessRules _passwordBusinessRules;
 		private readonly IMapper _mapper;
+		private readonly IUserService _userService;
 
-		public DeletePasswordCommandHandler(IPasswordService passwordService, PasswordBusinessRules passwordBusinessRules,IMapper mapper)
+        public DeletePasswordCommandHandler(IPasswordService passwordService, PasswordBusinessRules passwordBusinessRules,IMapper mapper,IUserService userService)
 		{
 			_passwordService = passwordService;
 			_passwordBusinessRules = passwordBusinessRules;
 			_mapper = mapper;
-		}
+			_userService = userService;
+        }
 
 		public async Task<DeletePasswordResponse> Handle(DeletePasswordCommand request, CancellationToken cancellationToken)
 		{
@@ -37,7 +40,9 @@ public class DeletePasswordCommand : IRequest<DeletePasswordResponse>, ISecuredR
 
 			Password deletedPassword = await _passwordService.DeleteAsync(password!, permanent: true);
 
-			return _mapper.Map<DeletePasswordResponse>(deletedPassword);
+			await _userService.UpdateVaultLastUpdatedDateAsync(request.UserId!.Value);
+
+            return _mapper.Map<DeletePasswordResponse>(deletedPassword);
 		}
 	}
 }

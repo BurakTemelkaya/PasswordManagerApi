@@ -1,5 +1,6 @@
 ﻿using Application.Features.Passwords.Dtos;
 using Application.Services.Passwords;
+using Application.Services.Users;
 using AutoMapper;
 using Core.Application.Pipelines.Authorization;
 using Core.Security.Constants;
@@ -28,15 +29,17 @@ public class ImportPasswordCommand : IRequest<ImportPasswordResponse>, ISecuredR
     {
         private readonly IMapper _mapper;
         private readonly IPasswordService _passwordService;
+        private readonly IUserService _userService;
 
-        public ImportPasswordCommandHandler(IMapper mapper, IPasswordService passwordService)
+        public ImportPasswordCommandHandler(IMapper mapper, IPasswordService passwordService,IUserService userService)
         {
             _mapper = mapper;
             _passwordService = passwordService;
+            _userService = userService;
         }
         public async Task<ImportPasswordResponse> Handle(ImportPasswordCommand request, CancellationToken cancellationToken)
         {
-            List<Domain.Entities.Password> passwordToAdd = new();
+            List<Domain.Entities.Password> passwordToAdd = [];
 
             foreach (var importPassword in request.ImportPasswordsDto)
             {
@@ -48,6 +51,8 @@ public class ImportPasswordCommand : IRequest<ImportPasswordResponse>, ISecuredR
             }
 
             ICollection<Domain.Entities.Password> addedPasswords = await _passwordService.AddRangeAsync(passwordToAdd);
+
+            await _userService.UpdateVaultLastUpdatedDateAsync(request.UserId!.Value);
 
             ImportPasswordResponse importedPasswordsResponse = new()
             {

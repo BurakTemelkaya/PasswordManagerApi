@@ -7,6 +7,7 @@ public class User : Core.Security.Entities.User<Guid>
     public byte[] MasterPasswordSalt { get; set; }
     public byte[] KdfSalt { get; set; }
     public int KdfIterations { get; set; }
+    public DateTime VaultLastUpdatedDate { get; set; }
     public virtual ICollection<Password> Passwords { get; set; }
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
 	public virtual ICollection<UserOperationClaim> UserOperationClaims { get; set; }
@@ -23,7 +24,7 @@ public class User : Core.Security.Entities.User<Guid>
         UserOperationClaims = new HashSet<UserOperationClaim>();
     }
 
-    public User(string userName, byte[] masterPasswordHash, byte[] masterPasswordSalt, byte[] kdfSalt, int kdfIterations, ICollection<Password> passwords, ICollection<RefreshToken> refreshTokens, ICollection<UserOperationClaim> userOperationClaims)
+    public User(string userName, byte[] masterPasswordHash, byte[] masterPasswordSalt, byte[] kdfSalt, int kdfIterations, ICollection<Password> passwords, ICollection<RefreshToken> refreshTokens, ICollection<UserOperationClaim> userOperationClaims, DateTime vaultLastUpdatedDate)
     {
         UserName = userName;
         MasterPasswordHash = masterPasswordHash;
@@ -33,5 +34,6 @@ public class User : Core.Security.Entities.User<Guid>
         Passwords = passwords;
         RefreshTokens = refreshTokens;
         UserOperationClaims = userOperationClaims;
+        VaultLastUpdatedDate = vaultLastUpdatedDate;
     }
 }
