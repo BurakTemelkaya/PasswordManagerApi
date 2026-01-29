@@ -50,17 +50,25 @@ jobs:
     - name: Wait for application to stop
       run: sleep 10
 
-    # 6. ADIM: Sadece deðiþen dosyalarý LFTP Mirror ile gönder (Tarih bazlý)
-    - name: Deploy changed files via LFTP Mirror
+    # 6. ADIM: Akýllý Deploy (Sadece Deðiþenler)
+    - name: Smart Deploy via LFTP
       run: |
         lftp -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }} <<EOF
         set ssl:verify-certificate no
         set ftp:ssl-allow yes
-        set ftp:use-site-chmod no
-        set ftp:use-site-utime no
-        set mirror:parallel-transfer-count 10
-        set mirror:use-pget-n 5
-        mirror --reverse --delete --verbose --only-newer --no-perms --parallel=10 ./publish/ passwordapi.buraktemelkaya.com/
+        
+        # Kritik Ayarlar:
+        # --ignore-time: Zaman damgalarýný görmezden gel.
+        # --size-only: Sadece dosya boyutu deðiþmiþse yeni say.
+        
+        mirror --reverse \
+               --delete \
+               --verbose \
+               --ignore-time \
+               --size-only \
+               --no-perms \
+               --parallel=10 \
+               ./publish/ passwordapi.buraktemelkaya.com/
         bye
         EOF
 

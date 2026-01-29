@@ -27,9 +27,9 @@ public class PasswordManager : IPasswordService
         return addedPasswords;
     }
 
-    public async Task<Password> DeleteAsync(Password operationClaim, bool permanent = false)
+    public async Task<Password> DeleteAsync(Password password, bool permanent = false)
     {
-        Password deletedPassword = await _passwordRepository.DeleteAsync(operationClaim);
+        Password deletedPassword = await _passwordRepository.DeleteAsync(password, permanent);
         return deletedPassword;
     }
 
@@ -73,9 +73,9 @@ public class PasswordManager : IPasswordService
         return passwordList;
     }
 
-    public async Task<Password> UpdateAsync(Password operationClaim)
+    public async Task<Password> UpdateAsync(Password password)
     {
-        Password updatedPassword = await _passwordRepository.UpdateAsync(operationClaim);
+        Password updatedPassword = await _passwordRepository.UpdateAsync(password);
         return updatedPassword;
     }
 
