@@ -7,6 +7,7 @@ using Core.Security.Entities;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace WebApi.Controllers;
 
@@ -24,6 +25,7 @@ public class AuthController : BaseController
             ?? throw new NullReferenceException($"\"{configurationSection}\" section cannot found in configuration.");
     }
 
+    [EnableRateLimiting("auth-strict")]
     [HttpPost("Login")]
     public async Task<IActionResult> Login([FromBody] UserForLoginDto userForLoginDto)
     {
@@ -44,6 +46,7 @@ public class AuthController : BaseController
         return Ok(result.ToHttpResponse());
     }
 
+    [EnableRateLimiting("register-limit")]
     [HttpPost("Register")]
     public async Task<IActionResult> Register([FromBody] UserForRegisterDto userForRegisterDto)
     {

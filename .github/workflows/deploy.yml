@@ -50,22 +50,24 @@ jobs:
     - name: Wait for application to stop
       run: sleep 10
 
-    # 6. ADIM: Akýllý Deploy (Sadece boyutu deðiþenler)
+    # 6. ADIM: Deðiþen dosyalarý gönder (Log ve özel klasörleri koru)
     - name: Deploy changed files via LFTP Mirror
       run: |
         lftp -u ${{ secrets.FTP_USERNAME }},${{ secrets.FTP_PASSWORD }} ${{ secrets.FTP_SERVER }} <<EOF
         set ssl:verify-certificate no
         set ftp:ssl-allow yes
-        
-        # mirror komutunu düzeltiyoruz:
-        # --ignore-time: Zaman damgalarýný (timestamp) yok sayar.
-        # Boyutlar aynýysa dosyayý 'deðiþmemiþ' kabul eder.
+        set ftp:use-site-chmod no
+        set ftp:use-site-utime no
+
+        # mirror komutuna --exclude ekliyoruz:
         mirror --reverse \
                --delete \
                --verbose \
                --ignore-time \
                --no-perms \
                --parallel=10 \
+               --exclude logs/ \
+               --exclude .well-known/ \
                ./publish/ passwordapi.buraktemelkaya.com/
         bye
         EOF

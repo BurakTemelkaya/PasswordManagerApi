@@ -9,10 +9,12 @@ using Core.Application.Requests;
 using Core.Application.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace WebApi.Controllers;
 
 [Authorize]
+[EnableRateLimiting("user-based")]
 [Route("api/[controller]")]
 [ApiController]
 public class PasswordController : BaseController

@@ -1,16 +1,19 @@
 using Application;
+using Core.CrossCuttingConcerns.Exception.WebApi.Extensions;
 using Core.CrossCuttingConcerns.Logging.Configurations;
 using Core.Security.Encryption;
 using Core.Security.JWT;
 using Core.Security.WebApi.Swagger.Extensions;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Persistence;
+using System.Security.Claims;
 using System.Text.Json.Serialization;
+using System.Threading.RateLimiting;
 using WebApi;
-using Core.CrossCuttingConcerns.Exception.WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,6 +83,50 @@ builder.Services.AddSwaggerGen(opt =>
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddRateLimiter(options =>
+{
+    // 1. Politika: Hassas Giriþ Ýþlemleri (Fixed Window)
+    options.AddFixedWindowLimiter(policyName: "auth-strict", opt =>
+    {
+        opt.PermitLimit = 5;
+        opt.Window = TimeSpan.FromMinutes(1);
+        opt.QueueLimit = 0;
+    });
+
+    // 2. Politika: Genel Vault Ýþlemleri (Sliding Window)
+    options.AddSlidingWindowLimiter(policyName: "vault-sync", opt =>
+    {
+        opt.PermitLimit = 100;
+        opt.Window = TimeSpan.FromMinutes(10);
+        opt.SegmentsPerWindow = 5;
+        opt.QueueLimit = 2;
+    });
+
+    options.AddFixedWindowLimiter(policyName: "register-limit", opt =>
+    {
+        opt.PermitLimit = 3;
+        opt.Window = TimeSpan.FromHours(1);
+        opt.QueueLimit = 0;
+    });
+
+    // Hata durumunda dönecek yanýt (429 Too Many Requests)
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddPolicy("user-based", httpContext =>
+    {
+        // Kullanýcý login olmuþsa ID'sini, olmamýþsa IP'sini anahtar (key) olarak kullan
+        var key = httpContext.User.Identity?.IsAuthenticated == true
+            ? httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value
+            : httpContext.Connection.RemoteIpAddress?.ToString();
+
+        return RateLimitPartition.GetFixedWindowLimiter(key, _ => new FixedWindowRateLimiterOptions
+        {
+            PermitLimit = 50,
+            Window = TimeSpan.FromMinutes(1)
+        });
+    });
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -89,7 +136,10 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI(); 
 }
 else
-	app.ConfigureCustomExceptionMiddleware();
+{
+    app.ConfigureCustomExceptionMiddleware();
+}
+	
 
 app.UseHttpsRedirection();
 
@@ -103,6 +153,8 @@ app.UseCors(
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseRateLimiter();
 
 app.MapControllers();
 

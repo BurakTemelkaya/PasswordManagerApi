@@ -4,6 +4,7 @@ using Application.Features.Users.Queries.GetKdfParams;
 using Application.Features.Users.Queries.GetVaultLastUpdateDate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace WebApi.Controllers;
 
@@ -21,6 +22,7 @@ public class UserController : BaseController
         return Ok(result);
     }
 
+    [EnableRateLimiting("auth-strict")]
     [HttpGet("GetUserKdfParams")]
     public async Task<IActionResult> GetUserKdfParams([FromQuery] GetKdfParamsQuery query)
     {
@@ -29,6 +31,7 @@ public class UserController : BaseController
     }
 
     [Authorize]
+    [EnableRateLimiting("vault-sync")]
     [HttpGet("GetVaultLastUpdateDate")]
     public async Task<IActionResult> GetVaultLastUpdateDate()
     {
