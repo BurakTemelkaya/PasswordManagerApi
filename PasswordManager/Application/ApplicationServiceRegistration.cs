@@ -11,7 +11,6 @@ using Core.Application.Pipelines.Validation;
 using Core.Application.Rules;
 using Core.CrossCuttingConcerns.Logging.Abstraction;
 using Core.CrossCuttingConcerns.Logging.Configurations;
-using Core.CrossCuttingConcerns.Logging.Serilog;
 using Core.CrossCuttingConcerns.Logging.Serilog.File;
 using Core.Localization.Resource.Yaml.DependencyInjection;
 using Core.Security.DependencyInjection;
