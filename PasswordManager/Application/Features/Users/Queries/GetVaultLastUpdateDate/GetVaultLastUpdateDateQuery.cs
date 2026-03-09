@@ -1,12 +1,8 @@
-﻿using Application.Features.Users.Dtos;
-using Application.Features.Users.Queries.GetKdfParams;
-using Application.Features.Users.Rules;
+﻿using Application.Features.Users.Rules;
 using Application.Services.Users;
-using AutoMapper;
 using Core.Application.Pipelines.Authorization;
 using Core.Security.Constants;
 using MediatR;
-using Microsoft.Extensions.Configuration;
 
 namespace Application.Features.Users.Queries.GetVaultLastUpdateDate;
 
@@ -21,7 +17,7 @@ public class GetVaultLastUpdateDateQuery : IRequest<DateTime>, ISecuredRequest
         private readonly IUserRepository _userRepository;
         private readonly UserBusinessRules _userBusinessRules;
 
-        public GetVaultLastUpdateDateQueryHandler(IUserRepository userRepository,UserBusinessRules userBusinessRules)
+        public GetVaultLastUpdateDateQueryHandler(IUserRepository userRepository, UserBusinessRules userBusinessRules)
         {
             _userRepository = userRepository;
             _userBusinessRules = userBusinessRules;

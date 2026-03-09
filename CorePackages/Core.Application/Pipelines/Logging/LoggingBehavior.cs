@@ -1,8 +1,8 @@
-﻿using System.Text.Json;
+﻿using Core.CrossCuttingConcerns.Logging;
+using Core.CrossCuttingConcerns.Logging.Abstraction;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Core.CrossCuttingConcerns.Logging;
-using Core.CrossCuttingConcerns.Logging.Abstraction;
+using System.Text.Json;
 
 namespace Core.Application.Pipelines.Logging;
 

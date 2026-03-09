@@ -8,4 +8,5 @@ public interface IDbMigrationApplierService
 }
 
 public interface IDbMigrationApplierService<TDbContext> : IDbMigrationApplierService
-    where TDbContext : DbContext { }
+    where TDbContext : DbContext
+{ }

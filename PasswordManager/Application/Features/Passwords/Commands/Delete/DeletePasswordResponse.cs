@@ -4,5 +4,5 @@ namespace Application.Features.Passwords.Commands.Delete;
 
 public class DeletePasswordResponse : IResponse
 {
-	public Guid Id { get; set; }
+    public Guid Id { get; set; }
 }

@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Core.CrossCuttingConcerns.Logging.Abstraction;
+﻿using Core.CrossCuttingConcerns.Logging.Abstraction;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Core.CrossCuttingConcerns.Logging.DependencyInjection;
 

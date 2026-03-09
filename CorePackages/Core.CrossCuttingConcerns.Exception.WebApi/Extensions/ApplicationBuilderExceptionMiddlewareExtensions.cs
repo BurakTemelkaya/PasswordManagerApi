@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Core.CrossCuttingConcerns.Exception.WebApi.Middleware;
+﻿using Core.CrossCuttingConcerns.Exception.WebApi.Middleware;
+using Microsoft.AspNetCore.Builder;
 
 namespace Core.CrossCuttingConcerns.Exception.WebApi.Extensions;
 

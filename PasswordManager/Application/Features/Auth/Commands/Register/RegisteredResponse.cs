@@ -1,7 +1,5 @@
 ﻿using Application.Features.Auth.Dtos;
 using Core.Application.Responses;
-using Core.Security.JWT;
-using Domain.Entities;
 
 namespace Application.Features.Auth.Commands.Register;
 

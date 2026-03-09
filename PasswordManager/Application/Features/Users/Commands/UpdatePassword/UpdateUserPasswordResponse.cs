@@ -9,10 +9,10 @@ public class UpdateUserPasswordResponse : IResponse
 
     public UpdateUserPasswordResponse()
     {
-        
+
     }
 
-    public UpdateUserPasswordResponse(Guid userId,DateTime updateDate)
+    public UpdateUserPasswordResponse(Guid userId, DateTime updateDate)
     {
         UserId = userId;
         UpdateDate = updateDate;

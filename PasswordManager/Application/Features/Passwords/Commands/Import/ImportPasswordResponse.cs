@@ -12,7 +12,7 @@ public class ImportPasswordResponse
         AdditionDate = DateTime.UtcNow;
     }
 
-    public ImportPasswordResponse(int addedPasswordCount,DateTime additionDate)
+    public ImportPasswordResponse(int addedPasswordCount, DateTime additionDate)
     {
         AddedPasswordCount = addedPasswordCount;
         AdditionDate = additionDate;

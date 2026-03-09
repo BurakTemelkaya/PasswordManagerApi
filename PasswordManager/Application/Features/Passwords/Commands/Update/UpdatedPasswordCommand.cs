@@ -32,7 +32,7 @@ public class UpdatedPasswordCommand : IRequest<UpdatePasswordResponse>, ISecured
         private readonly IPasswordService _passwordService;
         private readonly IUserService _userService;
 
-        public UpdatePasswordCommandHandler(IMapper mapper, IPasswordService passwordService,IUserService userService)
+        public UpdatePasswordCommandHandler(IMapper mapper, IPasswordService passwordService, IUserService userService)
         {
             _mapper = mapper;
             _passwordService = passwordService;

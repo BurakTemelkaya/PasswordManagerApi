@@ -34,7 +34,7 @@ public class GetKdfParamsQuery : IRequest<GetKdfParamsDto>
                 byte[] fakeResponse = HashingHelper.GenerateDeterministicSalt(request.UserName, _configuration.GetValue<string>("SaltSecret")!);
 
                 return new GetKdfParamsDto
-                { 
+                {
                     KdfSalt = fakeResponse,
                     KdfIterations = 600000
                 };

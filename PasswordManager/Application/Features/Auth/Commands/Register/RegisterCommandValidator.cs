@@ -1,5 +1,4 @@
-﻿using Application.Features.Passwords.Constants;
-using FluentValidation;
+﻿using FluentValidation;
 
 namespace Application.Features.Auth.Commands.Register;
 

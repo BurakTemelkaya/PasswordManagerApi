@@ -31,7 +31,7 @@ public class ImportPasswordCommand : IRequest<ImportPasswordResponse>, ISecuredR
         private readonly IPasswordService _passwordService;
         private readonly IUserService _userService;
 
-        public ImportPasswordCommandHandler(IMapper mapper, IPasswordService passwordService,IUserService userService)
+        public ImportPasswordCommandHandler(IMapper mapper, IPasswordService passwordService, IUserService userService)
         {
             _mapper = mapper;
             _passwordService = passwordService;

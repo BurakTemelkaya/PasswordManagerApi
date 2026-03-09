@@ -2,7 +2,7 @@
 
 public class GetListPasswordDto
 {
-	public Guid Id { get; set; }
+    public Guid Id { get; set; }
     public byte[] EncryptedName { get; set; }
     public byte[]? EncryptedUserName { get; set; }
     public byte[] EncryptedPassword { get; set; }
@@ -11,16 +11,16 @@ public class GetListPasswordDto
     public byte[] Iv { get; set; }
     public Guid UserId { get; set; }
     public DateTime CreatedDate { get; set; }
-	public DateTime? UpdatedDate { get; set; }
+    public DateTime? UpdatedDate { get; set; }
 
-	public GetListPasswordDto()
-	{
-		Id = Guid.NewGuid();
-		EncryptedName = [];
-		EncryptedPassword = [];
-		Iv = [];
-		CreatedDate = DateTime.UtcNow;
-	}
+    public GetListPasswordDto()
+    {
+        Id = Guid.NewGuid();
+        EncryptedName = [];
+        EncryptedPassword = [];
+        Iv = [];
+        CreatedDate = DateTime.UtcNow;
+    }
 
     public GetListPasswordDto(Guid id, byte[] encryptedName, byte[]? encryptedUserName, byte[] encryptedPassword, byte[]? encryptedDescription, byte[]? encryptedWebSiteUrl, byte[] iv, Guid userId, DateTime createdDate, DateTime? updatedDate)
     {

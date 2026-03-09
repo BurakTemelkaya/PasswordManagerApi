@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Core.CrossCuttingConcerns.Exception.Types;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Core.CrossCuttingConcerns.Exception.Types;
 
 namespace Core.CrossCuttingConcerns.Exception.WebApi.HttpProblemDetails;
 

@@ -10,9 +10,9 @@ public class User : Core.Security.Entities.User<Guid>
     public DateTime VaultLastUpdatedDate { get; set; }
     public virtual ICollection<Password> Passwords { get; set; }
     public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
-	public virtual ICollection<UserOperationClaim> UserOperationClaims { get; set; }
+    public virtual ICollection<UserOperationClaim> UserOperationClaims { get; set; }
 
-	public User()
+    public User()
     {
         UserName = string.Empty;
         Email = string.Empty;

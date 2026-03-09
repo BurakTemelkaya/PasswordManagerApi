@@ -3,7 +3,6 @@ using Application.Features.Auth.Commands.RefreshToken;
 using Application.Features.Auth.Commands.Register;
 using Application.Features.Auth.Commands.RevokeToken;
 using Application.Features.Auth.Dtos;
-using Core.Security.Entities;
 using Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;

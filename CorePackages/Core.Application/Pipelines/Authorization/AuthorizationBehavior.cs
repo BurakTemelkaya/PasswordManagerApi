@@ -1,8 +1,8 @@
-﻿using Core.Security.Constants;
+﻿using Core.CrossCuttingConcerns.Exception.Types;
+using Core.Security.Constants;
+using Core.Security.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using Core.CrossCuttingConcerns.Exception.Types;
-using Core.Security.Extensions;
 
 namespace Core.Application.Pipelines.Authorization;
 

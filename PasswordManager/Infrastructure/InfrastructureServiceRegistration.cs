@@ -6,12 +6,12 @@ namespace Infrastructure;
 
 public static class InfrastructureServiceRegistration
 {
-	public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
-	{
-		services.AddMemoryCache();
+    public static IServiceCollection AddInfrastructureServices(this IServiceCollection services)
+    {
+        services.AddMemoryCache();
 
-		services.AddSingleton<ICacheManager, MemoryCacheManager>();
+        services.AddSingleton<ICacheManager, MemoryCacheManager>();
 
-		return services;
-	}
+        return services;
+    }
 }

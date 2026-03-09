@@ -34,8 +34,8 @@ builder.Services.AddApplicationServices(
         .Configuration.GetSection("SeriLogConfigurations:FileLogConfiguration")
         .Get<FileLogConfiguration>()!,
         tokenOptions: builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>()
-			?? throw new InvalidOperationException("TokenOptions section cannot found in configuration.")
-		);
+            ?? throw new InvalidOperationException("TokenOptions section cannot found in configuration.")
+        );
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddPersistenceServices(builder.Configuration);
@@ -44,41 +44,41 @@ builder.Services.AddInfrastructureServices();
 
 const string tokenOptionsConfigurationSection = "TokenOptions";
 TokenOptions tokenOptions =
-	builder.Configuration.GetSection(tokenOptionsConfigurationSection).Get<TokenOptions>()
-	?? throw new InvalidOperationException($"\"{tokenOptionsConfigurationSection}\" section cannot found in configuration.");
+    builder.Configuration.GetSection(tokenOptionsConfigurationSection).Get<TokenOptions>()
+    ?? throw new InvalidOperationException($"\"{tokenOptionsConfigurationSection}\" section cannot found in configuration.");
 builder
-	.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-	.AddJwtBearer(options =>
-	{
-		options.TokenValidationParameters = new TokenValidationParameters
-		{
-			ValidateIssuer = true,
-			ValidateAudience = true,
-			ValidateLifetime = true,
-			ValidIssuer = tokenOptions.Issuer,
-			ValidAudience = tokenOptions.Audience,
-			ValidateIssuerSigningKey = true,
-			IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
-		};
-	});
+    .Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidIssuer = tokenOptions.Issuer,
+            ValidAudience = tokenOptions.Audience,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
+        };
+    });
 
 builder.Services.AddSwaggerGen(opt =>
 {
-	opt.AddSecurityDefinition(
-		name: "Bearer",
-		securityScheme: new OpenApiSecurityScheme
-		{
-			Name = "Authorization",
-			Type = SecuritySchemeType.Http,
-			Scheme = "Bearer",
-			BearerFormat = "JWT",
-			In = ParameterLocation.Header,
-			Description =
-				"JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer YOUR_TOKEN\". \r\n\r\n"
-				+ "`Enter your token in the text input below.`"
-		}
-	);
-	opt.OperationFilter<BearerSecurityRequirementOperationFilter>();
+    opt.AddSecurityDefinition(
+        name: "Bearer",
+        securityScheme: new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Type = SecuritySchemeType.Http,
+            Scheme = "Bearer",
+            BearerFormat = "JWT",
+            In = ParameterLocation.Header,
+            Description =
+                "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer YOUR_TOKEN\". \r\n\r\n"
+                + "`Enter your token in the text input below.`"
+        }
+    );
+    opt.OperationFilter<BearerSecurityRequirementOperationFilter>();
 });
 
 builder.Services.AddEndpointsApiExplorer();
@@ -105,7 +105,7 @@ builder.Services.AddRateLimiter(options =>
     options.AddFixedWindowLimiter(policyName: "register-limit", opt =>
     {
         opt.PermitLimit = 3;
-        opt.Window = TimeSpan.FromHours(1);
+        opt.Window = TimeSpan.FromMinutes(30);
         opt.QueueLimit = 0;
     });
 
@@ -132,14 +132,14 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	app.UseSwaggerUI(); 
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 else
 {
     app.ConfigureCustomExceptionMiddleware();
 }
-	
+
 
 app.UseHttpsRedirection();
 

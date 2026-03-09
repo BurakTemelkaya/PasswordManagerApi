@@ -45,7 +45,7 @@ public class UpdateUserPasswordCommand : IRequest<UpdateUserPasswordResponse>, I
         private readonly UserBusinessRules _userBusinessRules;
 
         public UpdateUserPasswordCommandHandler(IUserService userService, IMapper mapper
-            , IPasswordService passwordService,UserBusinessRules userBusinessRules)
+            , IPasswordService passwordService, UserBusinessRules userBusinessRules)
         {
             _userService = userService;
             _mapper = mapper;

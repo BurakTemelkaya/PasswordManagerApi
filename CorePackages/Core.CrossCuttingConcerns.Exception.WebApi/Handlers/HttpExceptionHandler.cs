@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
-using Core.CrossCuttingConcerns.Exception.Handlers;
+﻿using Core.CrossCuttingConcerns.Exception.Handlers;
 using Core.CrossCuttingConcerns.Exception.Types;
 using Core.CrossCuttingConcerns.Exception.WebApi.Extensions;
 using Core.CrossCuttingConcerns.Exception.WebApi.HttpProblemDetails;
+using Microsoft.AspNetCore.Http;
 
 namespace Core.CrossCuttingConcerns.Exception.WebApi.Handlers;
 
