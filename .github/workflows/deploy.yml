@@ -25,6 +25,7 @@ jobs:
         ConnectionStrings.PasswordManagerDb: ${{ secrets.DB_CONNECTION }}
         TokenOptions.SecurityKey: ${{ secrets.JWT_SECURITY_KEY }}
         SaltSecret: ${{ secrets.SALT_SECRET }}
+        AutoMapper.LicenseKey: ${{ AUTOMAPPER_LICENSEKEY }}
 
     # 2. ADIM: Publish (Build) alma
     - name: Dotnet Publish

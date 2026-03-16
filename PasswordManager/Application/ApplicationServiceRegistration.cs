@@ -1,4 +1,5 @@
-﻿using Application.Services.AuthService;
+﻿using Application.Features.Auth.Profiles;
+using Application.Services.AuthService;
 using Application.Services.OperationClaims;
 using Application.Services.Passwords;
 using Application.Services.UserOperationClaims;
@@ -16,6 +17,7 @@ using Core.Localization.Resource.Yaml.DependencyInjection;
 using Core.Security.DependencyInjection;
 using Core.Security.JWT;
 using FluentValidation;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
@@ -23,9 +25,9 @@ namespace Application;
 
 public static class ApplicationServiceRegistration
 {
-    public static IServiceCollection AddApplicationServices(this IServiceCollection services, FileLogConfiguration fileLogConfiguration, TokenOptions tokenOptions)
+    public static IServiceCollection AddApplicationServices(this IServiceCollection services, FileLogConfiguration fileLogConfiguration, TokenOptions tokenOptions,IConfiguration configuration)
     {
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        services.AddAutoMapper(cfg => cfg.LicenseKey = configuration["AutoMapper:LicenseKey"], typeof(MappingProfiles));
         services.AddMediatR(configuration =>
         {
             configuration.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());

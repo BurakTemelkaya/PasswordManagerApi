@@ -34,7 +34,8 @@ builder.Services.AddApplicationServices(
         .Configuration.GetSection("SeriLogConfigurations:FileLogConfiguration")
         .Get<FileLogConfiguration>()!,
         tokenOptions: builder.Configuration.GetSection("TokenOptions").Get<TokenOptions>()
-            ?? throw new InvalidOperationException("TokenOptions section cannot found in configuration.")
+            ?? throw new InvalidOperationException("TokenOptions section cannot found in configuration."),
+        builder.Configuration
         );
 builder.Services.AddHttpContextAccessor();
 
